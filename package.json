@@ -1,0 +1,19 @@
+{
+  "name": "@crholm/re-time",
+  "version": "0.1.0",
+  "scripts": {
+    "clean": "bsb -clean-world",
+    "build": "bsb -make-world",
+    "start": "bsb -make-world -w",
+    "test": "bsb && jest --coverage"
+  },
+  "keywords": [
+    "BuckleScript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@glennsl/bs-jest": "^0.5.1",
+    "bs-platform": "^8.0.3"
+  }
+}
