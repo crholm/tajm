@@ -232,4 +232,24 @@ describe("Kit", () => {
     |> expect
     |> toEqual([]);
   });
+
+  test("unzip2", () => {
+    let l1 = [(1, "a"), (2, "b")];
+    l1 |> Kit.List.unzip2 |> expect |> toEqual(([1, 2], ["a", "b"]));
+  });
+  test("unzip22", () => {
+    let l1 = [];
+    l1 |> Kit.List.unzip2 |> expect |> toEqual(([], []));
+  });
+  test("unzip3", () => {
+    let l1 = [(1, "a", 1.), (2, "b", 2.)];
+    l1
+    |> Kit.List.unzip3
+    |> expect
+    |> toEqual(([1, 2], ["a", "b"], [1., 2.]));
+  });
+  test("unzip32", () => {
+    let l1 = [];
+    l1 |> Kit.List.unzip3 |> expect |> toEqual(([], [], []));
+  });
 });

@@ -8,6 +8,8 @@ module List = {
   let find_last: ('a => bool, list('a)) => 'a =
     (equal, l) => l |> rev |> find(equal);
 
+  let last: list('a) => 'a = l => nth(l, length(l) - 1);
+
   let rec drop_left: (int, list('a)) => list('a) =
     (i, l) => {
       if (l |> length < i) {
@@ -112,16 +114,22 @@ module List = {
       l |> drop_left(start) |> drop_right(len - stop);
     };
 
-  let zip2: (list('b), list('a)) => list(('a, 'b)) =
-    (l2, l1) => {
+  let zip2_with: (('a, 'b) => 'c, list('b), list('a)) => list('c) =
+    (zipper, l2, l1) => {
       if (length(l1) != length(l2)) {
         raise(Invalid_argument("lists_of_different_sizes"));
       };
-      fold_left2((acc, e1, e2) => acc @ [(e1, e2)], [], l1, l2);
+      fold_left2((acc, a, b) => acc @ [zipper(a, b)], [], l1, l2);
     };
 
-  let zip3: (list('b), list('c), list('a)) => list(('a, 'b, 'c)) =
-    (l2, l3, l1) => {
+  //   let zip2: (list('y), list('x)) => list(('x, 'y)) =
+  //     zip2_with((x: 'z, y: 'y) => (x, y));
+  let zip2: (list('b), list('a)) => list(('a, 'b)) =
+    (l2, l1) => l1 |> zip2_with((a, b) => (a, b), l2);
+
+  let zip3_with:
+    (('a, 'b, 'c) => 'd, list('b), list('c), list('a)) => list('d) =
+    (zipper, l2, l3, l1) => {
       if (length(l1) != length(l2) || length(l2) != length(l3)) {
         raise(Invalid_argument("lists_of_different_sizes"));
       };
@@ -136,9 +144,39 @@ module List = {
             let t1 = l1 |> tl;
             let t2 = l2 |> tl;
             let t3 = l3 |> tl;
-            zip(acc @ [(h1, h2, h3)], t1, t2, t3);
+            zip(acc @ [zipper(h1, h2, h3)], t1, t2, t3);
           };
       };
       zip([], l1, l2, l3);
+    };
+
+  let zip3: (list('b), list('c), list('a)) => list(('a, 'b, 'c)) =
+    (l2, l3, l1) => {
+      zip3_with((a, b, c) => (a, b, c), l2, l3, l1);
+    };
+
+  let unzip2: list(('a, 'b)) => (list('a), list('b)) =
+    l => {
+      fold_left(
+        (acc, e) => {
+          let (a, b) = e;
+          let (l1, l2) = acc;
+          (l1 @ [a], l2 @ [b]);
+        },
+        ([], []),
+        l,
+      );
+    };
+  let unzip3: list(('a, 'b, 'c)) => (list('a), list('b), list('c)) =
+    l => {
+      fold_left(
+        (acc, e) => {
+          let (a, b, c) = e;
+          let (l1, l2, l3) = acc;
+          (l1 @ [a], l2 @ [b], l3 @ [c]);
+        },
+        ([], [], []),
+        l,
+      );
     };
 };
