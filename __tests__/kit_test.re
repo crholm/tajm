@@ -2,20 +2,49 @@ open Jest;
 open Expect;
 
 describe("Kit", () => {
+  test("truncate", () => {
+    let l1 = ["1", "2"];
+    l1 |> Kit.List.truncate(1) |> expect |> toEqual(["1"]);
+  });
+  test("truncate", () => {
+    let l1 = ["1", "2"];
+    l1 |> Kit.List.truncate(10) |> expect |> toEqual(["1", "2"]);
+  });
+  test("truncate", () => {
+    let l1 = ["1", "2"];
+    l1 |> Kit.List.truncate(-1) |> expect |> toEqual([]);
+  });
+
+  test("truncate2", () => {
+    let l1 = ["1", "2"];
+    let l2 = ["1"];
+    l1 |> Kit.List.truncate2(l2) |> expect |> toEqual((["1"], ["1"]));
+  });
+
+  test("truncate3", () => {
+    let l1 = ["1", "2"];
+    let l2 = ["1"];
+    let l3 = ["1"];
+    l1
+    |> Kit.List.truncate3(l2, l3)
+    |> expect
+    |> toEqual((["1"], ["1"], ["1"]));
+  });
+  test("truncate33", () => {
+    let l1 = ["1", "2"];
+    let l2 = ["1"];
+    let l3 = [];
+    l1 |> Kit.List.truncate3(l2, l3) |> expect |> toEqual(([], [], []));
+  });
+
   test("dropLeft", () => {
     let l1 = ["1", "2", "3", "4", "5"];
-
-    l1 |> Kit.List.drop_left(3) |> expect |> toEqual(["4", "5"]);
+    l1 |> Kit.List.drop(3) |> expect |> toEqual(["4", "5"]);
   });
   test("dropLeft2", () => {
     let l1 = [];
-    (
-      try(l1 |> Kit.List.drop_left(3)) {
-      | Invalid_argument("not_enough_elements") => ["bad dog"]
-      }
-    )
-    |> expect
-    |> toEqual(["bad dog"]);
+
+    l1 |> Kit.List.drop(3) |> expect |> toEqual([]);
   });
 
   test("dropRight", () => {
@@ -27,17 +56,11 @@ describe("Kit", () => {
   test("takeLeft", () => {
     let l1 = ["1", "2", "3", "4", "5"];
 
-    l1 |> Kit.List.take_left(2) |> expect |> toEqual(["1", "2"]);
+    l1 |> Kit.List.take(2) |> expect |> toEqual(["1", "2"]);
   });
   test("takeLeft2", () => {
     let l1 = [];
-    (
-      try(l1 |> Kit.List.take_left(2)) {
-      | Invalid_argument("not_enough_elements") => ["bad dog"]
-      }
-    )
-    |> expect
-    |> toEqual(["bad dog"]);
+    l1 |> Kit.List.take(2) |> expect |> toEqual([]);
   });
 
   test("takeRight", () => {
@@ -49,15 +72,12 @@ describe("Kit", () => {
   test("takeLeftWhile", () => {
     let l1 = [0, 0, 0, 1, 1];
 
-    l1
-    |> Kit.List.take_left_while(a => a == 0)
-    |> expect
-    |> toEqual([0, 0, 0]);
+    l1 |> Kit.List.take_while(a => a == 0) |> expect |> toEqual([0, 0, 0]);
   });
   test("takeLeftWhile2", () => {
     let l1 = [];
 
-    l1 |> Kit.List.take_left_while(a => a == 0) |> expect |> toEqual([]);
+    l1 |> Kit.List.take_while(a => a == 0) |> expect |> toEqual([]);
   });
 
   test("intersect", () => {
@@ -114,7 +134,7 @@ describe("Kit", () => {
 
     l1
     |> Kit.List.union((a, b) => a == b, l2)
-    |> Kit.List.fold_left((acc, a) => acc ++ string_of_int(a) ++ ", ", "")
+    |> Kit.List.reduce((acc, a) => acc ++ string_of_int(a) ++ ", ", "")
     |> expect
     |> toEqual("1, 3, 2, 5, 4, ");
   });
@@ -124,7 +144,7 @@ describe("Kit", () => {
 
     l1
     |> Kit.List.union((a, b) => a == b, l2)
-    |> Kit.List.fold_left((acc, a) => acc ++ string_of_int(a) ++ ", ", "")
+    |> Kit.List.reduce((acc, a) => acc ++ string_of_int(a) ++ ", ", "")
     |> expect
     |> toEqual("3, 5, 4, 2, ");
   });
@@ -134,7 +154,7 @@ describe("Kit", () => {
 
     l1
     |> Kit.List.union((a, b) => a == b, l2)
-    |> Kit.List.fold_left((acc, a) => acc ++ string_of_int(a) ++ ", ", "")
+    |> Kit.List.reduce((acc, a) => acc ++ string_of_int(a) ++ ", ", "")
     |> expect
     |> toEqual("3, 5, 4, 2, ");
   });
@@ -202,13 +222,7 @@ describe("Kit", () => {
   test("zip22", () => {
     let l1 = [0, 1];
     let l2 = ["a", "b", "c"];
-    (
-      try(l1 |> Kit.List.zip2(l2)) {
-      | Invalid_argument("lists_of_different_sizes") => []
-      }
-    )
-    |> expect
-    |> toEqual([]);
+    l1 |> Kit.List.zip2(l2) |> expect |> toEqual([(0, "a"), (1, "b")]);
   });
   test("zip3", () => {
     let l1 = [0, 1];
@@ -220,17 +234,14 @@ describe("Kit", () => {
     |> toEqual([(0, "a", 0.), (1, "b", 1.)]);
   });
   test("zip33", () => {
-    let l1 = [0, 1];
+    let l1 = [0, 1, 2];
     let l2 = ["a", "b"];
-    let l3 = [0., 1., 2.];
+    let l3 = [0., 1.];
 
-    (
-      try(l1 |> Kit.List.zip3(l2, l3)) {
-      | Invalid_argument("lists_of_different_sizes") => []
-      }
-    )
+    l1
+    |> Kit.List.zip3(l2, l3)
     |> expect
-    |> toEqual([]);
+    |> toEqual([(0, "a", 0.), (1, "b", 1.)]);
   });
 
   test("unzip2", () => {

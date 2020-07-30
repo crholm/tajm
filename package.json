@@ -5,7 +5,7 @@
     "clean": "bsb -clean-world",
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
-    "test": "bsb && jest --coverage"
+    "test": "bsb && jest"
   },
   "keywords": [
     "BuckleScript"
