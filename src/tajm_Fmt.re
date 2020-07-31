@@ -224,7 +224,7 @@ let rec tokenize = (acc: list(token), s: string): list(token) => {
             |> _listOfString
             |> _takeWhile(c => c == '0')
             |> List.length
-            |> min(3);
+            |> _min(3);
           tokenize(acc @ [FracSecond0(l)], strip(l + 1, s));
         | ".9" =>
           let l =
@@ -232,7 +232,7 @@ let rec tokenize = (acc: list(token), s: string): list(token) => {
             |> _listOfString
             |> _takeWhile(c => c == '9')
             |> List.length
-            |> min(3);
+            |> _min(3);
           tokenize(acc @ [FracSecond9(l)], strip(l + 1, s));
         | _ => parseUnknown(1, s)
         }
@@ -289,7 +289,7 @@ let printer = (t: time_, tokens: list(token)) => {
            | YearDay => t |> yearDay |> string_of_int
            | RightYearDay => t |> yearDay |> string_of_int |> _leftPad(3, ' ')
            | ZeroYearDay => t |> yearDay |> string_of_int |> _leftPad(3, '0')
-           | Hour => t |> hour |> string_of_int
+           | Hour => t |> hour |> string_of_int |> _leftPad(2, '0')
            | Hour12 =>
              let h = t |> hour;
              (h == 0 ? 12 : h / 13 + h mod 13) |> string_of_int;
@@ -310,16 +310,15 @@ let printer = (t: time_, tokens: list(token)) => {
            | FracSecond0(i) =>
              "." ++ (t |> millisecond |> string_of_int |> _leftPad(i, '0'))
            | FracSecond9(i) =>
-             "."
-             ++ (
+             let str =
                t
                |> millisecond
                |> string_of_int
                |> _leftPad(i, '0')
                |> _listOfString
                |> _dropRightWhile(c => c == '0')
-               |> _stringOfList
-             )
+               |> _stringOfList;
+             String.length(str) == 0 ? "" : "." ++ str;
            // TZ stuff to do ...
            | TZ => t |> Tajm_Kernel.getTZName
            | ISO8601ShortTZ =>

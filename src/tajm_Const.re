@@ -13,4 +13,5 @@ let fmtRFC1123 = "Mon, 02 Jan 2006 15:04:05 MST";
 let fmtRFC1123Z = "Mon, 02 Jan 2006 15:04:05 -0700"; // RFC1123 with numeric zone
 let fmtRFC3339 = "2006-01-02T15:04:05Z07:00";
 let fmtRFC3339ms = "2006-01-02T15:04:05.999Z07:00";
+let fmtISO8601ms = "2006-01-02T15:04:05.000Z07:00";
 let fmtKitchen = "3:04PM";

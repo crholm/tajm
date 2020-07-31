@@ -57,8 +57,12 @@ let _takeRightWhile: ('a => bool, list('a)) => list('a) =
 
 let rec _dropWhile: ('a => bool, list('a)) => list('a) =
   (fn, l) => {
-    let h = l |> List.hd;
-    !fn(h) ? l : _dropWhile(fn, l |> List.tl);
+    List.length(l) == 0
+      ? l
+      : {
+        let h = l |> List.hd;
+        !fn(h) ? l : _dropWhile(fn, l |> List.tl);
+      };
   };
 
 let _dropRightWhile: ('a => bool, list('a)) => list('a) =

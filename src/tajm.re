@@ -12,6 +12,7 @@ let format = (s: string, t: time_) => {
 };
 
 let string = (t: time_): string => {
-  // t |> format(fmtRFC3339ms);
-  t |> Tajm_Kernel.toJs |> Js.Date.toISOString;
+  t |> inUTC |> format(fmtISO8601ms);
 };
+
+let toJs = Tajm_Kernel.toJs;

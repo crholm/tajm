@@ -71,7 +71,7 @@ describe("Tajm fmt", () => {
   });
   test("fmtUnixDate make 2", () => {
     let t = make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60));
-    let exp = "Mon Jan 20 9:00:00 UTC 2020";
+    let exp = "Mon Jan 20 09:00:00 UTC 2020";
 
     t |> inUTC |> format(fmtUnixDate) |> expect |> toBe(exp);
   });
