@@ -1,6 +1,5 @@
 open Jest;
 open Expect;
-
 describe("Kit", () => {
   test("truncate", () => {
     let l1 = ["1", "2"];

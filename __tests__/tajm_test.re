@@ -92,7 +92,17 @@ describe("Time operations", () => {
     |> expect
     |> toBe("1h0m0s");
   });
-  test("dur parse", () => {
+  test("dur parse0", () => {
+    let d =
+      0.9876
+      +. Duration.millisecond
+      +. Duration.secound
+      +. Duration.minute
+      +. Duration.hour;
+
+    d |> Duration.string |> expect |> toBe("1h1m1.001s");
+  });
+  test("dur parse1", () => {
     let d = "1h1m1s";
     d |> Duration.parse |> Duration.string |> expect |> toBe(d);
   });
@@ -108,7 +118,7 @@ describe("Time operations", () => {
     let d = "100h10m10.001s";
     d |> Duration.parse |> Duration.string |> expect |> toBe(d);
   });
-  test("dur parse4", () => {
+  test("dur parse5", () => {
     let d = "100h10m10.00100s";
     let exp = "100h10m10.001s";
 
@@ -116,18 +126,18 @@ describe("Time operations", () => {
   });
 
   test("intToWeekday", () => {
-    let m1 = 0 |> weekdayOfInt;
-    let m2 = 6 |> weekdayOfInt;
-    (m1 |> stringOfWeekday)
-    ++ (m2 |> stringOfWeekday)
+    let m1 = 0 |> Conv.weekdayOfInt;
+    let m2 = 6 |> Conv.weekdayOfInt;
+    (m1 |> Conv.stringOfWeekday)
+    ++ (m2 |> Conv.stringOfWeekday)
     |> expect
     |> toBe("MondaySunday");
   });
   test("getWeekday", () => {
     let m1 = make(~y=2020, ~m=July, ~d=20, z) |> weekday;
     let m2 = make(~y=2020, ~m=July, ~d=26, z) |> weekday;
-    (m1 |> stringOfWeekday)
-    ++ (m2 |> stringOfWeekday)
+    (m1 |> Conv.stringOfWeekday)
+    ++ (m2 |> Conv.stringOfWeekday)
     |> expect
     |> toBe("MondaySunday");
   });

@@ -1,26 +1,40 @@
-type d = float;
+open Tajm_Type;
+open Tajm_Util;
 
-let millisecond: d = 1.0;
-let secound: d = 1000. *. millisecond;
-let minute: d = 60. *. secound;
-let hour: d = 60. *. minute;
+let millisecond: duration_ = 1.0;
+let secound: duration_ = 1000. *. millisecond;
+let minute: duration_ = 60. *. secound;
+let hour: duration_ = 60. *. minute;
 
-let string = (a: d) => {
+let truncate = (_m: duration_, _d: duration_): duration_ => {
+  _d -. mod_float(_d, _m);
+};
+
+let string = (a: duration_) => {
   let s = mod_float(a, minute) /. secound;
   let m = (mod_float(a, hour) -. s) /. minute;
   let h = a /. hour;
 
+  let parts = Tajm_Kernel.string_of_float(s) |> String.split_on_char('.');
+  let ss = parts |> List.hd;
+  let ms =
+    parts |> List.length < 2
+      ? ""
+      : "."
+        ++ {
+          let mms = parts |> List.tl |> List.hd;
+          mms |> String.length < 4 ? mms : String.sub(mms, 0, 3);
+        };
+
   (h > 0. ? string_of_int(int_of_float(h)) ++ "h" : "")
   ++ (h > 0. || m > 0. ? string_of_int(int_of_float(m)) ++ "m" : "")
-  ++ Js.Float.toString(s)
+  ++ ss
+  ++ ms
   ++ "s";
 };
 
-let truncate = (_m: d, _d: d): d => {
-  _d -. mod_float(_d, _m);
-};
-
-let parse = (_d: string): d => {
+// Todo: replace rais with option
+let parse = (_d: string): duration_ => {
   let hi =
     try(String.index(_d, 'h')) {
     | Not_found => (-1)
@@ -52,24 +66,16 @@ let parse = (_d: string): d => {
         try(
           String.sub(_d, si + 1, msi - si - 1)
           |> (
-            s1 => {
-              let l =
-                Kit_List.init(String.length(s1), i => String.sub(s1, i, 1))
-                |> Kit_List.drop_right_while(c => c == "0");
-
-              let s = Kit.List.reduce((acc, c) => acc ++ c, "", l);
+            s => {
+              let l = s |> _listOfString |> _dropRightWhile(c => c == '0');
 
               let divisor =
-                l
-                |> Kit.List.take_while(c => c == "0")
-                |> List.length
-                |> float_of_int;
+                l |> _takeWhile(c => c == '0') |> List.length |> float_of_int;
 
-              s
+              l
+              |> _stringOfList
               |> float_of_string
-              |> (
-                f => f *. 100. /. Js.Math.pow_float(~base=10., ~exp=divisor)
-              );
+              |> (f => f *. 100. /. 10. ** divisor);
             }
           )
         ) {
