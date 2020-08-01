@@ -136,6 +136,7 @@ describe("Time operations", () => {
   test("getWeekday", () => {
     let m1 = make(~y=2020, ~m=July, ~d=20, z) |> weekday;
     let m2 = make(~y=2020, ~m=July, ~d=26, z) |> weekday;
+
     (m1 |> Conv.stringOfWeekday)
     ++ (m2 |> Conv.stringOfWeekday)
     |> expect

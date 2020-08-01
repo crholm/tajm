@@ -102,7 +102,7 @@ let stringOfMonth = (month: month_): string => {
   | December => "December"
   };
 };
-let stringOfMonthShort = (month: month_): string => {
+let stringShortOfMonth = (month: month_): string => {
   // TODO apply timezone adjustment
   switch (month) {
   | January => "Jan"
@@ -117,6 +117,24 @@ let stringOfMonthShort = (month: month_): string => {
   | October => "Oct"
   | November => "Nov"
   | December => "Dec"
+  };
+};
+let monthOfStringShort = (m: string): month_ => {
+  // TODO apply timezone adjustment
+  switch (m) {
+  | "Jan" => January
+  | "Feb" => February
+  | "Mar" => March
+  | "Apr" => April
+  | "May" => May
+  | "Jun" => June
+  | "Jul" => July
+  | "Aug" => August
+  | "Sep" => September
+  | "Oct" => October
+  | "Nov" => November
+  | "Dec" => December
+  | _ => raise(Failure("Not a valid month"))
   };
 };
 

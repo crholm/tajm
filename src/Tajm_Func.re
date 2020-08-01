@@ -190,7 +190,7 @@ let set =
       ~y: option(int)=?,
       ~m: option(month_)=?,
       ~d: option(int)=?,
-      ~h: option(int)=?,
+      ~hour as h: option(int)=?,
       ~min: option(int)=?,
       ~sec: option(int)=?,
       ~ms: option(int)=?,
@@ -210,8 +210,8 @@ let set =
 };
 
 let setDate = (y: int, m: month_, d: int, t: time_) => set(~y, ~m, ~d, t);
-let setClock = (h: int, min: int, sec: int, t: time_) =>
-  set(~h, ~min, ~sec, t);
+let setClock = (hour: int, min: int, sec: int, t: time_) =>
+  set(~hour, ~min, ~sec, t);
 
 let addDate =
     (
@@ -242,7 +242,7 @@ let rec startOf = (u: timeunit_, t: time_) => {
   switch (u) {
   | Year => t |> set(~m=January) |> startOf(Month)
   | Month => t |> set(~d=1) |> startOf(Day)
-  | Day => t |> set(~h=0) |> startOf(Hour)
+  | Day => t |> set(~hour=0) |> startOf(Hour)
   | Hour => t |> set(~min=0) |> startOf(Minute)
   | Minute => t |> set(~sec=0) |> startOf(Second)
   | Second => t |> set(~ms=0) |> startOf(Millisecond)
@@ -254,7 +254,7 @@ let rec endOf = (u: timeunit_, t: time_) => {
   switch (u) {
   | Year => t |> set(~m=December) |> endOf(Month)
   | Month => t |> set(~d=daysInMonth(year(t), month(t))) |> endOf(Day)
-  | Day => t |> set(~h=23) |> endOf(Hour)
+  | Day => t |> set(~hour=23) |> endOf(Hour)
   | Hour => t |> set(~min=59) |> endOf(Minute)
   | Minute => t |> set(~sec=59) |> endOf(Second)
   | Second => t |> set(~ms=999) |> endOf(Millisecond)

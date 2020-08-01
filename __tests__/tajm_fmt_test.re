@@ -106,8 +106,115 @@ describe("Tajm fmt", () => {
 
     t2 -. Duration.hour |> expect |> toBe(t1);
   });
-});
+  test("fmtUnixDate set 3", () => {
+    let t1 =
+      make(~y=2020, ~m=January, ~d=20, ~hour=10, Local)
+      |> set(~m=June)
+      |> unix;
+    let t2 =
+      make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60))
+      |> set(~m=June)
+      |> unix;
 
-t1
-|> format(fmtRFC3339ms)
-|> Js.log3("2", (t1 |> string) ++ " -- " ++ fmtRFC3339ms ++ " -- ");
+    t2 -. Duration.hour |> expect |> toBe(t1);
+  });
+
+  test("fmtUnixDate set 3", () => {
+    make(
+      ~y=2020,
+      ~m=Tajm.August,
+      ~d=1,
+      ~hour=12,
+      ~min=32,
+      ~sec=42,
+      ~ms=532,
+      Tajm.z,
+    )
+    |> format(fmtISOWeek)
+    |> expect
+    |> toBe("2020-W31")
+  });
+  test("fmtISOWeekDay", () => {
+    make(
+      ~y=2020,
+      ~m=Tajm.August,
+      ~d=1,
+      ~hour=12,
+      ~min=32,
+      ~sec=42,
+      ~ms=532,
+      Tajm.z,
+    )
+    |> format(fmtISOWeekDay)
+    |> expect
+    |> toBe("2020-W31-6")
+  });
+  test("yearDay 1", () => {
+    make(
+      ~y=2020,
+      ~m=Tajm.August,
+      ~d=1,
+      ~hour=12,
+      ~min=32,
+      ~sec=42,
+      ~ms=532,
+      Tajm.z,
+    )
+    |> format("8")
+    |> expect
+    |> toBe("214")
+  });
+  test("yearDay 2", () => {
+    make(
+      ~y=2020,
+      ~m=Tajm.January,
+      ~d=14,
+      ~hour=12,
+      ~min=32,
+      ~sec=42,
+      ~ms=532,
+      Tajm.z,
+    )
+    |> format("__8")
+    |> expect
+    |> toBe(" 14")
+  });
+  test("yearDay 3", () => {
+    make(
+      ~y=2020,
+      ~m=Tajm.January,
+      ~d=14,
+      ~hour=13,
+      ~min=7,
+      ~sec=42,
+      ~ms=532,
+      Tajm.z,
+    )
+    |> format("008")
+    |> expect
+    |> toBe("014")
+  });
+
+  test("...", () => {
+    let log = a => {
+      Js.log2(">", a);
+      a;
+    };
+    //         Month       | month   | day     | hour       | min     | sec
+    let fmt = "Jan January | 1 01 _1 | 2 02 _2 | 15 3 03 _3 PM | 4 04 _4 | 5 05 _5";
+    make(~y=2020, ~m=February, ~d=4, ~hour=13, ~min=7, ~sec=9, ~ms=30, z)
+    |> format(fmt)
+    |> log
+    |> parse(fmt)
+    |> (
+      fun
+      | Some(t) => t
+      | None => raise(Failure("Something is wrong"))
+    )
+    |> format(fmt)
+    |> expect
+    |> toBe(
+         "Feb February | 2 02  2 | 4 04  4 | 13 1 01  1 PM | 7 07  7 | 9 09  9",
+       );
+  });
+});

@@ -1,16 +1,19 @@
 {
-  "name": "@crholm/re-time",
+  "name": "@crholm/tajm",
   "version": "0.1.0",
   "scripts": {
     "clean": "bsb -clean-world",
-    "build": "bsb -make-world",
+    "build": "bsb -clean-world && bsb -make-world",
     "start": "bsb -make-world -w",
     "test": "bsb && jest"
   },
   "keywords": [
-    "BuckleScript"
+    "BuckleScript",
+    "Time",
+    "Date",
+    "Reason"
   ],
-  "author": "",
+  "author": "Rasmus Holm",
   "license": "MIT",
   "devDependencies": {
     "@glennsl/bs-jest": "^0.5.1",

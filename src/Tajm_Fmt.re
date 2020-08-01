@@ -1,7 +1,7 @@
 open Tajm_Util;
 open Tajm_Type;
 open Tajm_Conv;
-open Tajm_Fun;
+open Tajm_Func;
 
 type token =
   | LongMonth // = "January";
@@ -11,12 +11,13 @@ type token =
   | RightMonth // = "_1";
   | LongWeekDay // = "Monday";
   | WeekDay // = "Mon";
+  | NumWeekDay // = "7";
   | Day // = "2";
   | ZeroDay // = "02";
   | RightDay // = "_2";
-  | YearDay // = "7"
-  | ZeroYearDay // = "007";
-  | RightYearDay // = "__7";
+  | YearDay // = "8"
+  | ZeroYearDay // = "008";
+  | RightYearDay // = "__8";
   | Hour // = "15";
   | Hour12 // = "3";
   | ZeroHour12 // = "03";
@@ -24,6 +25,9 @@ type token =
   | Minute // = "4";
   | ZeroMinute // = "04";
   | RightMinute // = "_4";
+  | YearWeek // = "49";
+  | RightYearWeek // = "_9"
+  | ZeroYearWeek // = "09"
   | Second // = "5";
   | ZeroSecond // = "05";
   | RightSecond // = "_5";
@@ -55,6 +59,9 @@ let crtl = (c: string) => {
   | "3" => true
   | "4" => true
   | "5" => true
+  | "7" => true
+  | "8" => true
+  | "9" => true
   | "_" => true
   | "-" => true
   | "." => true
@@ -73,22 +80,27 @@ let tokenOfString = (s: string): token => {
   | "_3" => RightHour12
   | "_4" => RightMinute
   | "_5" => RightSecond
-  | "__7" => RightYearDay
+  | "_9" => RightYearWeek
+  | "__8" => RightYearDay
   | "01" => ZeroMonth
   | "02" => ZeroDay
   | "03" => ZeroHour12
   | "04" => ZeroMinute
   | "05" => ZeroSecond
   | "06" => Year
-  | "007" => ZeroYearDay
+  | "07" => NumWeekDay
+  | "008" => ZeroYearDay
+  | "09" => ZeroYearWeek
   | "1" => NumMonth
   | "15" => Hour
   | "2" => Day
   | "2006" => LongYear
   | "3" => Hour12
   | "4" => Minute
+  | "49" => YearWeek
   | "5" => Second
-  | "7" => YearDay
+  | "7" => NumWeekDay
+  | "8" => YearDay
   | "PM" => PM(true)
   | "pm" => PM(false)
   | "TZ" => TZ
@@ -187,9 +199,15 @@ let rec tokenize = (acc: list(token), s: string): list(token) => {
           tokenize(acc @ [Day], strip(1, s));
         }
       | "3" => tokenize(acc @ [Hour12], strip(1, s))
-      | "4" => tokenize(acc @ [Minute], strip(1, s))
+      | "4" =>
+        if (peek(2, s) == "49") {
+          tokenize(acc @ [YearWeek], strip(2, s));
+        } else {
+          tokenize(acc @ [Minute], strip(1, s));
+        }
       | "5" => tokenize(acc @ [Second], strip(1, s))
-      | "7" => tokenize(acc @ [YearDay], strip(1, s))
+      | "7" => tokenize(acc @ [NumWeekDay], strip(1, s))
+      | "8" => tokenize(acc @ [YearDay], strip(1, s))
       | "0" =>
         switch (peek(2, s)) {
         | "01" => tokenize(acc @ [ZeroMonth], strip(2, s))
@@ -199,8 +217,9 @@ let rec tokenize = (acc: list(token), s: string): list(token) => {
         | "05" => tokenize(acc @ [ZeroSecond], strip(2, s))
         | "06" => tokenize(acc @ [Year], strip(2, s))
         | "00" =>
-          peek(3, s) == "002"
-            ? tokenize(acc @ [Year], strip(3, s)) : parseUnknown(1, s)
+          peek(3, s) == "008"
+            ? tokenize(acc @ [ZeroYearDay], strip(3, s))
+            : parseUnknown(1, s)
         | _ => parseUnknown(1, s)
         }
       | "_" =>
@@ -211,7 +230,7 @@ let rec tokenize = (acc: list(token), s: string): list(token) => {
         | "_4" => tokenize(acc @ [RightMinute], strip(2, s))
         | "_5" => tokenize(acc @ [RightSecond], strip(2, s))
         | "__" =>
-          peek(3, s) == "__7"
+          peek(3, s) == "__8"
             ? tokenize(acc @ [RightYearDay], strip(3, s))
             : parseUnknown(1, s)
         | _ => parseUnknown(1, s)
@@ -275,7 +294,7 @@ let printer = (t: time_, tokens: list(token)) => {
          ++ (
            switch (tk) {
            | LongMonth => t |> month |> stringOfMonth
-           | Month => t |> month |> stringOfMonthShort
+           | Month => t |> month |> stringShortOfMonth
            | NumMonth => t |> month |> intOfMonth |> string_of_int
            | ZeroMonth =>
              t |> month |> intOfMonth |> string_of_int |> _leftPad(2, '0')
@@ -290,11 +309,23 @@ let printer = (t: time_, tokens: list(token)) => {
            | RightYearDay => t |> yearDay |> string_of_int |> _leftPad(3, ' ')
            | ZeroYearDay => t |> yearDay |> string_of_int |> _leftPad(3, '0')
            | Hour => t |> hour |> string_of_int |> _leftPad(2, '0')
+           | NumWeekDay => (t |> weekday |> intOfWeekday) + 1 |> string_of_int
+           | ZeroYearWeek => t |> week |> string_of_int |> _leftPad(2, '0')
+           | RightYearWeek => t |> week |> string_of_int |> _leftPad(2, ' ')
+           | YearWeek => t |> week |> string_of_int
            | Hour12 =>
              let h = t |> hour;
              (h == 0 ? 12 : h / 13 + h mod 13) |> string_of_int;
-           | ZeroHour12 => t |> hour |> string_of_int |> _leftPad(2, '0')
-           | RightHour12 => t |> hour |> string_of_int |> _leftPad(2, ' ')
+           | ZeroHour12 =>
+             let h = t |> hour;
+             (h == 0 ? 12 : h / 13 + h mod 13)
+             |> string_of_int
+             |> _leftPad(2, '0');
+           | RightHour12 =>
+             let h = t |> hour;
+             (h == 0 ? 12 : h / 13 + h mod 13)
+             |> string_of_int
+             |> _leftPad(2, ' ');
            | Minute => t |> minute |> string_of_int
            | ZeroMinute => t |> minute |> string_of_int |> _leftPad(2, '0')
            | RightMinute => t |> minute |> string_of_int |> _leftPad(2, ' ')
@@ -363,4 +394,200 @@ let printer = (t: time_, tokens: list(token)) => {
        },
        "",
      );
+};
+
+let parse = (s: string, tokens: list(token)): option(time_) => {
+  let par = (): option(time_) => {
+    let (_, t) =
+      tokens
+      |> List.fold_left(
+           (acc, token) => {
+             let (str, t) = acc;
+             switch (token) {
+             | LongMonth =>
+               // = "January";
+               let hd = peek(3, str);
+               let m = hd |> monthOfStringShort;
+               let name = m |> stringOfMonth;
+               if (peek(name |> String.length, str) != name) {
+                 raise(Failure("Not a valid month"));
+               };
+               let tl = strip(name |> String.length, str);
+               (tl, t |> set(~m));
+             | Month =>
+               // = "Jan";
+               let (hd, tl) = poll(3, str);
+               let m = hd |> monthOfStringShort;
+               (tl, t |> set(~m));
+             | NumMonth =>
+               // = "1";
+               let (hd, tl) = poll(1, str);
+               let next = tl |> peek(1);
+               if (hd == "1" && "0" <= next && next <= "2") {
+                 let m = hd ++ next |> int_of_string |> monthOfInt;
+                 (strip(1, str), t |> set(~m));
+               } else {
+                 let m = hd |> int_of_string |> monthOfInt;
+                 (tl, t |> set(~m));
+               };
+
+             | ZeroMonth =>
+               // = "01";
+               let (hd, tl) = poll(2, str);
+               let m = hd |> int_of_string |> monthOfInt;
+               (tl, t |> set(~m));
+             | RightMonth =>
+               // = "_1";
+               let (hd, tl) = poll(2, str);
+               let m = hd |> String.trim |> int_of_string |> monthOfInt;
+               (tl, t |> set(~m));
+             | Day =>
+               // = "2";
+               let (hd, tl) = poll(1, str);
+               let next = peek(1, str);
+               if ("1" <= hd && hd <= "3" && "0" <= next && next <= "9") {
+                 let d = hd ++ next |> int_of_string;
+                 (tl |> strip(1), t |> set(~d));
+               } else {
+                 let d = hd |> int_of_string;
+                 (tl, t |> set(~d));
+               };
+             | ZeroDay =>
+               // = "02";
+               let (hd, tl) = poll(2, str);
+               let d = hd |> int_of_string;
+               (tl, t |> set(~d));
+             | RightDay =>
+               // = "_2";
+               let (hd, tl) = poll(2, str);
+               let d = hd |> String.trim |> int_of_string;
+               (tl, t |> set(~d));
+
+             | Hour =>
+               // = "15";
+               let (hd, tl) = poll(2, str);
+               let hour = hd |> int_of_string;
+               (tl, t |> set(~hour));
+             | Hour12 =>
+               // = "3";
+               let (hd, tl) = poll(1, str);
+               let next = peek(1, tl);
+               if (hd == "1" && "0" <= next && next <= "2") {
+                 let hour = hd ++ next |> int_of_string;
+                 (tl |> strip(1), t |> set(~hour));
+               } else {
+                 let hour = hd |> int_of_string;
+                 (tl, t |> set(~hour));
+               };
+
+             | ZeroHour12 =>
+               // = "03";
+               let (hd, tl) = poll(2, str);
+               let hour = hd |> int_of_string;
+               (tl, t |> set(~hour));
+             | RightHour12 =>
+               // = "_3";
+               let (hd, tl) = poll(2, str);
+               let hour = hd |> String.trim |> int_of_string;
+               (tl, t |> set(~hour));
+             | Minute =>
+               // = "4";
+               let (hd, tl) = poll(1, str);
+               let next = peek(1, tl);
+               if ("1" <= hd && hd <= "6" && "0" <= next && next <= "9") {
+                 let min = hd ++ next |> int_of_string;
+                 (tl |> strip(1), t |> set(~min));
+               } else {
+                 let min = hd |> int_of_string;
+                 (tl, t |> set(~min));
+               };
+
+             | ZeroMinute =>
+               // = "04";
+               let (hd, tl) = poll(2, str);
+               let min = hd |> int_of_string;
+               (tl, t |> set(~min));
+             | RightMinute =>
+               // = "_4";
+               let (hd, tl) = poll(2, str);
+               let min = hd |> String.trim |> int_of_string;
+               (tl, t |> set(~min));
+             | Second =>
+               // = "5";
+               let (hd, tl) = poll(1, str);
+               let next = peek(1, tl);
+               if ("1" <= hd && hd <= "6" && "0" <= next && next <= "9") {
+                 let sec = hd ++ next |> int_of_string;
+                 (tl |> strip(1), t |> set(~sec));
+               } else {
+                 let sec = hd |> int_of_string;
+                 (tl, t |> set(~sec));
+               };
+             | ZeroSecond =>
+               // = "05";
+               let (hd, tl) = poll(2, str);
+               let sec = hd |> int_of_string;
+               (tl, t |> set(~sec));
+             | RightSecond =>
+               // = "_5";
+               let (hd, tl) = poll(2, str);
+               let sec = hd |> String.trim |> int_of_string;
+               (tl, t |> set(~sec));
+             | LongYear =>
+               // = "2006";
+               let (hd, tl) = poll(4, str);
+               let y = hd |> int_of_string;
+               (tl, t |> set(~y));
+             | Year =>
+               // = "06";
+               let (hd, tl) = poll(2, str);
+               let yy = hd |> int_of_string;
+               let y = yy > 50 ? 1900 : 2000;
+               (tl, t |> set(~y));
+
+             | PM(_) =>
+               // = "PM" | "pm";
+               // Todo if "pm" apply adjustment once parsing is done
+               let (hd, tl) = poll(2, str);
+               if (hd |> String.lowercase_ascii == "pm") {
+                 let adjust = t |> hour;
+                 let hour = adjust < 12 ? adjust + 12 : adjust;
+                 (tl, t |> set(~hour));
+               } else {
+                 (tl, t);
+               };
+
+             | TZ => (str, t) // = "MST";
+             | ISO8601TZ => (str, t) // = "Z0700";  prints Z for UTC
+             | ISO8601ShortTZ => (str, t) // = "Z07";
+             | ISO8601ColonTZ => (str, t) // = "Z07:00";  prints Z for UTC
+             | NumTZ => (str, t) // = "-0700";  always numeric
+             | NumShortTZ => (str, t) // = "-07"; always numeric
+             | NumColonTZ => (str, t) // = "-07:00";
+             | FracSecond0(_) => (str, t) // = ".0"; ".00", ".000", ... , trailing zeros included
+             | FracSecond9(_) => (str, t) // = ".9"; ".99", ".999" ... , trailing zeros omited
+
+             | YearWeek => (str, t) // = "49";
+             | RightYearWeek => (str, t) // = "_9"
+             | ZeroYearWeek => (str, t) // = "09"
+             | LongWeekDay => (str, t) // = "Monday";
+             | WeekDay => (str, t) // = "Mon";
+             | NumWeekDay => (str, t) // = "7";
+             | YearDay => (str, t) // = "8"
+             | ZeroYearDay => (str, t) // = "008";
+             | RightYearDay => (str, t) // = "__8";
+             | Unkown(ss) => (strip(ss |> String.length, str), t)
+             };
+           },
+           (s, zero),
+         );
+
+    Some(t);
+  };
+
+  switch (par()) {
+  | Some(t) => Some(t)
+  | None => None
+  | exception _ => None
+  };
 };
