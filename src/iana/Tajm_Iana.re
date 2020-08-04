@@ -18,8 +18,9 @@ let offset = (i: tz, period: int): int => {
   - i.zones[zidx].offset;
 };
 let abbr = (i: tz, period: int): string => {
-  let idx = i.zones[period].abbrev_idx;
-  i.abbrev[idx];
+  let zidx = i.zone_idxs[period];
+  let abbrev_idx = i.zones[zidx].abbrev_idx;
+  i.abbrev[abbrev_idx];
 };
 
 let db = ref([]: list(tz));
