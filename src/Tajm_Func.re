@@ -9,13 +9,27 @@ let at = (loc: location_, t: time_) => {
   {...t, loc};
 };
 
-let inLocal = at(local);
-let inUTC = at(z);
-let inFixed = (name: string, sec: int) => Fixed(name, sec) |> at;
+let atLocal = at(local);
+let atUTC = at(z);
+let atFixed = (name: string, sec: int) => Fixed(name, sec) |> at;
 let zone = (t: time_) => {
   t.loc;
 };
 let zero = {t: 0L, loc: z};
+
+let location = (name: string): option(location_) => {
+  switch (name |> String.lowercase_ascii) {
+  | "local" => Some(local)
+  | "utc" => Some(z)
+  | _ =>
+    Tajm_Iana.getLocation(name)
+    |> (
+      fun
+      | Some(i) => Some(IANA(i))
+      | None => None
+    )
+  };
+};
 
 let unix = (t: time_): float => {
   t.t |> Int64.to_float;

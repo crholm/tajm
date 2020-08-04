@@ -281,11 +281,7 @@ let rec tokenize = (acc: list(token), s: string): list(token) => {
 };
 
 let printer = (t: time_, tokens: list(token)) => {
-  let tzOffset = () =>
-    switch (t.loc) {
-    | Fixed(_, off) => off
-    | Local => t |> Tajm_Kernel.tzAdjustment
-    };
+  let tzOffset = () => - (t |> Tajm_Kernel.tzAdjustment) / 1000 / 60;
 
   tokens
   |> List.fold_left(
@@ -357,7 +353,7 @@ let printer = (t: time_, tokens: list(token)) => {
              off == 0
                ? "Z"
                : (off < 0 ? "-" : "+")
-                 ++ (off / 60 |> string_of_int |> _leftPad(2, '0'));
+                 ++ (abs(off) / 60 |> string_of_int |> _leftPad(2, '0'));
            | ISO8601TZ =>
              let off = tzOffset();
              off == 0

@@ -8,6 +8,8 @@ let toJs = (t: time_) => {
 let getTZName = (t: time_) => {
   switch (t.loc) {
   | Fixed(name, _) => name
+  | IANA(i) =>
+    t.t |> Int64.to_float |> Tajm_Iana.period(i) |> Tajm_Iana.abbr(i)
   | Local =>
     // TODO: this is uglt since it returns the long JS name of the timezone
     // eg. "Central European Summer Time" instead of CEST
@@ -28,16 +30,17 @@ let getTZName = (t: time_) => {
 };
 
 let getTimezoneOffset = (t: time_) => {
-  t |> toJs |> Js.Date.getTimezoneOffset;
+  (t |> toJs |> Js.Date.getTimezoneOffset) *. 60.0; // offset in secounds
 };
 
 let tzAdjustment = (t: time_): int => {
-  1000  // Millisecound -> Secound
-  * 60  // Secound -> Minute
+  1000
   * (
     switch (t.loc) {
     | Fixed(_, min) => - min
     | Local => t |> getTimezoneOffset |> int_of_float
+    | IANA(i) =>
+      t.t |> Int64.to_float |> Tajm_Iana.period(i) |> Tajm_Iana.offset(i)
     }
   );
 };

@@ -54,29 +54,37 @@ describe("Tajm fmt", () => {
   test("fmtRFC3339tz", () => {
     let exp = "2020-02-29T14:44:35+01:30";
 
-    t1 |> inFixed("misc", 90) |> format(fmtRFC3339) |> expect |> toBe(exp);
+    t1
+    |> atFixed("misc", 90 * 60)
+    |> format(fmtRFC3339)
+    |> expect
+    |> toBe(exp);
   });
 
   test("fmtRFC3339 make 1", () => {
-    let t = make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60));
+    let t =
+      make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60 * 60));
     let exp = "2020-01-20T10:00:00+01:00";
 
     t |> format(fmtRFC3339) |> expect |> toBe(exp);
   });
   test("fmtUnixDate make 1", () => {
-    let t = make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60));
+    let t =
+      make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60 * 60));
     let exp = "Mon Jan 20 10:00:00 CET 2020";
 
     t |> format(fmtUnixDate) |> expect |> toBe(exp);
   });
   test("fmtUnixDate make 2", () => {
-    let t = make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60));
+    let t =
+      make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60 * 60));
     let exp = "Mon Jan 20 09:00:00 UTC 2020";
 
-    t |> inUTC |> format(fmtUnixDate) |> expect |> toBe(exp);
+    t |> atUTC |> format(fmtUnixDate) |> expect |> toBe(exp);
   });
   test("fmtUnixDate set 1", () => {
-    let t = make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60));
+    let t =
+      make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60 * 60));
     let exp = "Sat Jun 20 10:00:00 CET 2020";
 
     t |> set(~m=June) |> format(fmtUnixDate) |> expect |> toBe(exp);
@@ -100,7 +108,7 @@ describe("Tajm fmt", () => {
       |> set(~m=June)
       |> unix;
     let t2 =
-      make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60))
+      make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60 * 60))
       |> set(~m=June)
       |> unix;
 
@@ -112,7 +120,7 @@ describe("Tajm fmt", () => {
       |> set(~m=June)
       |> unix;
     let t2 =
-      make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60))
+      make(~y=2020, ~m=January, ~d=20, ~hour=10, Fixed("CET", 60 * 60))
       |> set(~m=June)
       |> unix;
 

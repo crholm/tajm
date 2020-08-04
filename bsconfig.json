@@ -6,8 +6,14 @@
       "subdirs": true
     },
     {
-      "dir": "__tests__",
-      "type": "dev"
+      "dir": "__tests__/",
+      "type": "dev",
+      "subdirs": true
+    },
+    {
+      "dir": "tools",
+      "type": "dev",
+      "subdirs": true
     }
   ],
   "bs-dev-dependencies": [

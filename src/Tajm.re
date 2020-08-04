@@ -15,7 +15,7 @@ let parse = (format: string, t: string) => {
 };
 
 let string = (t: time_): string => {
-  t |> inUTC |> format(fmtISOTimestampMs);
+  t |> atUTC |> format(fmtISOTimestampMs);
 };
 
 let toJs = Tajm_Kernel.toJs;

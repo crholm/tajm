@@ -23,7 +23,8 @@ type weekday_ =
 
 type location_ =
   | Fixed(string, int)
-  | Local;
+  | Local
+  | IANA(Tajm_Iana_Tz.tz);
 
 type time_ = {
   t: int64,
