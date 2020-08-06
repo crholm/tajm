@@ -460,9 +460,9 @@ describe("Time operations", () => {
   });
 
   test("Print", () => {
-    Js.log(now() |> addDate(~y=1, ~m=15, ~d=50) |> string);
+    // Js.log(now() |> addDate(~y=1, ~m=15, ~d=50) |> string);
 
-    Js.log(Tajm.now() |> unix |> Int64.of_float);
+    // Js.log(Tajm.now() |> unix |> Int64.of_float);
     true |> expect |> toBe(true);
   });
 });

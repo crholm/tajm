@@ -37,7 +37,7 @@ let tzAdjustment = (t: time_): int => {
   1000
   * (
     switch (t.loc) {
-    | Fixed(_, min) => - min
+    | Fixed(_, sec) => - sec
     | Local => t |> getTimezoneOffset |> int_of_float
     | IANA(i) =>
       t.t |> Int64.to_float |> Tajm_Iana.period(i) |> Tajm_Iana.offset(i)

@@ -394,6 +394,8 @@ let printer = (t: time_, tokens: list(token)) => {
 
 let parse = (s: string, tokens: list(token)): option(time_) => {
   let par = (): option(time_) => {
+    let tz = ref(Fixed("UTC", 0))
+    let pmAdjustment = ref(false)
     let (_, t) =
       tokens
       |> List.fold_left(
@@ -546,20 +548,78 @@ let parse = (s: string, tokens: list(token)): option(time_) => {
                // Todo if "pm" apply adjustment once parsing is done
                let (hd, tl) = poll(2, str);
                if (hd |> String.lowercase_ascii == "pm") {
-                 let adjust = t |> hour;
-                 let hour = adjust < 12 ? adjust + 12 : adjust;
-                 (tl, t |> set(~hour));
-               } else {
-                 (tl, t);
+                 pmAdjustment := true;
                };
+                 (tl, t);
 
              | TZ => (str, t) // = "MST";
-             | ISO8601TZ => (str, t) // = "Z0700";  prints Z for UTC
-             | ISO8601ShortTZ => (str, t) // = "Z07";
-             | ISO8601ColonTZ => (str, t) // = "Z07:00";  prints Z for UTC
-             | NumTZ => (str, t) // = "-0700";  always numeric
-             | NumShortTZ => (str, t) // = "-07"; always numeric
-             | NumColonTZ => (str, t) // = "-07:00";
+             | ISO8601TZ => // = "Z0700";  prints Z for UTC
+               let (hd, tl) = poll(1, str);
+               if(hd == "Z"){
+                 (tl, t |> at(Tajm_Const.z)) 
+               }else {
+                 let neg = hd == "-";
+                 let (h, tl) = poll(2, tl);
+                 let (m, tl) = poll(2, tl);
+                 let sec = (neg ? -1 : 1) *int_of_string(h)*60*60 + int_of_string(m)*60;
+                 tz := Fixed("", sec);
+
+                 (tl, t)
+               }
+               
+             | ISO8601ShortTZ => // = "Z07";
+                let (hd, tl) = poll(1, str);
+                if(hd == "Z"){
+                  (tl, t |> at(Tajm_Const.z)) 
+                }else {
+                  let neg = hd == "-";
+                  let (h, tl) = poll(2, tl);
+                  let sec = (neg ? -1 : 1) *int_of_string(h)*60*60;
+                    tz := Fixed("", sec);
+
+                  (tl, t )
+                }
+             | ISO8601ColonTZ => // = "Z07:00";  prints Z for UTC
+               let (hd, tl) = poll(1, str);
+               if(hd == "Z"){
+                 (tl, t |> at(Tajm_Const.z)) 
+               }else {
+                 let neg = hd == "-";
+                 let (h, tl) = poll(2, tl);
+                 let (_, tl) = poll(1, tl);
+                 let (m, tl) = poll(2, tl);
+                 let sec = (neg ? -1 : 1) *int_of_string(h)*60*60 + int_of_string(m)*60;
+                 tz := Fixed("", sec);
+                 (tl, t )
+               }
+             | NumTZ => // = "-0700";  always numeric
+                let (hd, tl) = poll(1, str);
+                let neg = hd == "-";
+                let (h, tl) = poll(2, tl);
+                let (m, tl) = poll(2, tl);
+                let sec = (neg ? -1 : 1) *int_of_string(h)*60*60 + int_of_string(m)*60;
+                tz := Fixed("", sec);
+                (tl, t)
+          
+
+             | NumShortTZ => // = "-07"; always numeric
+                let (hd, tl) = poll(1, str);
+                let neg = hd == "-";
+                let (h, tl) = poll(2, tl);
+                let sec = (neg ? -1 : 1) *int_of_string(h)*60*60;
+                tz := Fixed("", sec);
+                (tl, t)
+          
+             | NumColonTZ => // = "-07:00";
+             let (hd, tl) = poll(1, str);
+                let neg = hd == "-";
+                let (h, tl) = poll(2, tl);
+                let (_, tl) = poll(1, tl)
+                let (m, tl) = poll(2, tl);
+                let sec = (neg ? -1 : 1) *int_of_string(h)*60*60 + int_of_string(m)*60;
+                tz := Fixed("", sec);
+                (tl, t)
+          
              | FracSecond0(_) => (str, t) // = ".0"; ".00", ".000", ... , trailing zeros included
              | FracSecond9(_) => (str, t) // = ".9"; ".99", ".999" ... , trailing zeros omited
 
@@ -578,7 +638,14 @@ let parse = (s: string, tokens: list(token)): option(time_) => {
            (s, zero),
          );
 
-    Some(t);
+    let t = !pmAdjustment^ ? t : {
+      let adjust = t |> hour;
+      let hour = adjust < 12 ? adjust + 12 : adjust;
+      t |> set(~hour);
+    };
+    
+    let adjust = {t: t.t, loc: tz^} |> Tajm_Kernel.tzAdjustment |> Int64.of_int;
+    Some({t: Int64.add(t.t, adjust), loc: tz^});
   };
 
   switch (par()) {

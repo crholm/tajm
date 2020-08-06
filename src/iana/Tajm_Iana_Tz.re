@@ -1,7 +1,14 @@
 type zone = {
   offset: int,
-  dst: bool,
+  // dst: bool,
   abbrev_idx: int,
+};
+
+module Lazy = {
+  type tz = {
+    raw: string,
+    name: string,
+  };
 };
 
 type tz = {

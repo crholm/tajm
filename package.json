@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "clean": "bsb -clean-world",
-    "build:iana": "cd tools; ./iana.sh",
+    "build:iana": "./iana.sh",
     "build:bsb": "bsb -clean-world && bsb -make-world",
     "build": "npm run build:iana && npm run build:bsb",
     "test": "bsb && jest"

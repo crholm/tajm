@@ -46,3 +46,17 @@ let rec dropRightWhile: ('a => bool, array('a)) => array('a) =
         !fn(h) ? l : dropRightWhile(fn, Array.sub(l, 0, len - 2));
       };
   };
+
+let find: ('a => bool, array('a)) => option('a) =
+  (fn, arr) => {
+    let len = Array.length(arr);
+    let rec find = i =>
+      if (i == len) {
+        None;
+      } else if (fn(arr[i])) {
+        Some(arr[i]);
+      } else {
+        find(i + 1);
+      };
+    find(0);
+  };

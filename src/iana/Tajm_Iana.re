@@ -23,19 +23,35 @@ let abbr = (i: tz, period: int): string => {
   i.abbrev[abbrev_idx];
 };
 
-let db = ref([]: list(tz));
+let db = ref([||]: array(tz));
+let dbz = ref([||]: array(Lazy.tz));
 
-let getLocation = (name: string): option(tz) =>
-  try({
-    let i = db^ |> List.find(a => a.name == name);
-    Some(i);
-  }) {
-  | _ => None
-  };
-
-let loadLocation = (tz: tz) => {
-  db := [tz] @ db^;
+let loadLocations = (tzs: array(tz)) => {
+  db := Array.append(tzs, db^);
 };
-let loadLocations = (tzs: list(tz)) => {
-  db := tzs @ db^;
+let loadLocation = (tz: tz) => {
+  loadLocations([|tz|]);
+};
+
+let getLocation = (name: string): option(tz) => {
+  let o = db^ |> Tajm_Functions_Array.find(a => a.name == name);
+  switch (o) {
+  | Some(t) => Some(t)
+  | None =>
+    let l = dbz^ |> Tajm_Functions_Array.find((a: Lazy.tz) => a.name == name);
+    switch (l) {
+    | Some(lz) =>
+      let loc = Tajm_Iana_Encoding.unmarshal(lz.raw);
+      loadLocation(loc);
+      Some(loc);
+    | None => None
+    };
+  };
+};
+
+let lazyLoadLocations = (tzs: array(Lazy.tz)) => {
+  dbz := Array.append(tzs, dbz^);
+};
+let lazyLoadLocation = (tz: Lazy.tz) => {
+  lazyLoadLocations([|tz|]);
 };

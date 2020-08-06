@@ -1,5 +1,5 @@
 module Arrays = Tajm_Functions_Array;
-module Strings = Tajm_Functions_String;
+module Strings = Tajm_Functions_Strings;
 module Binary = Tajm_Functions_Binary;
 module Base64 = Tajm_Functions_Base64;
 
@@ -39,21 +39,18 @@ let read_zone_infos = (arr: array(char), num: int) => {
       (acc, arr);
     } else {
       let (off, arr) = poll(4, arr);
-      let (dst, arr) = poll(1, arr);
+      // let (dst, arr) = poll(1, arr);
+      let (_, arr) = poll(1, arr);
       let (desig, arr) = poll(1, arr);
       acc[Array.length(acc) - num] =
         Tajm_Iana_Tz.{
           offset: Binary.int_of_bytes(`big, off),
-          dst: dst[0] == '\001',
+          // dst: dst[0] == '\001',
           abbrev_idx: int_of_char(desig[0]),
         };
       read(acc, arr, num - 1);
     };
-  read(
-    Array.make(num, Tajm_Iana_Tz.{offset: 0, dst: false, abbrev_idx: 0}),
-    arr,
-    num,
-  );
+  read(Array.make(num, Tajm_Iana_Tz.{offset: 0, abbrev_idx: 0}), arr, num);
 };
 
 let read_leap_seconds = (arr: array(char), num: int, is64) => {
@@ -154,6 +151,50 @@ let read_headers = (data: array(char)): (header, array(char)) => {
   ({version, n_utc_local, n_std_wall, n_leap, n_time, n_zone, n_char}, data);
 };
 
+let unmarshal = (data: string): Tajm_Iana_Tz.tz => {
+  // Js.log(" 1");
+  let parts = Strings.split('|', data);
+  // Js.log(" 2");
+  let name = parts[0];
+  // Js.log(" 3");
+  let abbrev =
+    parts[1] |> Strings.split(' ');
+  // Js.log(" 4");
+  let zones =
+    parts[2]
+    |> Strings.split(' ')
+    |> Array.map(s => {
+         let pp = Strings.split(':', s);
+         Tajm_Iana_Tz.{
+           offset: pp[0] |> int_of_string,
+           abbrev_idx: pp[1] |> int_of_string,
+         };
+       })
+    ;
+  // Js.log(" 5");
+  let zone_idxs =
+    parts[3]
+    |> Tajm_Functions_Array.of_string
+    |> Array.map(c => {int_of_char(c) - 48});
+  // Js.log(" 6");
+  let transitions =
+    parts[4]
+    |> Strings.split(' ')
+    |> Array.map((p: string) => {
+         let neg = p.[0] == '-';
+         let p = neg ? String.sub(p, 1, String.length(p) - 1) : p;
+         let bytes = Base64.decode(`std, p);
+         let blen = Array.length(bytes);
+         let bytes = Array.append(Array.init(8 - blen, _ => '\000'), bytes);
+         let num = Binary.float_of_bytes(`big, bytes) *. 1000.;
+
+         neg ? -. num : num;
+       })
+    ;
+  // Js.log(" 7");
+  Tajm_Iana_Tz.{name, abbrev, zones, zone_idxs, transitions};
+};
+
 let marshal = (tz: Tajm_Iana_Tz.tz) => {
   // let compressFloat = (f: float): string => {
   //   let prefix = f < 0. ? "-" : "";
@@ -209,10 +250,10 @@ let marshal = (tz: Tajm_Iana_Tz.tz) => {
           let bytes = Binary.bytes_of_float(`big, z);
           let bytes = Arrays.dropWhile(c => c == '\000', bytes);
           let enc = Base64.encode(`std, bytes);
-          let enc =
-            Arrays.of_string(enc)
-            |> Arrays.dropRightWhile(a => a == '=')
-            |> Arrays.to_string;
+          // let enc =
+          //   Arrays.of_string(enc)
+          //   |> Arrays.dropRightWhile(a => a == '=')
+          //   |> Arrays.to_string;
           (neg ? "-" : "") ++ enc;
         },
         tz.transitions,
@@ -303,8 +344,11 @@ let unmarshal_binary = (name: string, data: array(char)) => {
   let (zones, data) = read_zone_infos(data, head.n_zone);
   // Js.log2("zone_infos", zones);
 
-  let (abbrev_arr, data) = poll(head.n_char, data);
-  let abbrev = Strings.split('\000', Arrays.to_string(abbrev_arr));
+  let (abbrev_arr, data) = poll(head.n_char - 1, data);
+  let abbrev =
+    Arrays.to_string(abbrev_arr)
+    |> Strings.split('\000');
+  let (_, data) = poll(1, data);
   // Js.log2("abbrev", abbrev);
 
   // Mapping to correct index

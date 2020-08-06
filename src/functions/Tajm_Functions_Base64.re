@@ -64,12 +64,17 @@ let decode = (enc: encoding, str: string): array(char) => {
 
   let chars = Array.init(String.length(str), i => str.[i]);
   let len = Array.length(chars);
-  if (chars[len - 1] == '=') {
-    chars[len - 1] = 'A';
-  };
-  if (chars[len - 2] == '=') {
-    chars[len - 2] = 'A';
-  };
+  let rm =
+    if (chars[len - 2] == '=') {
+      chars[len - 1] = 'A';
+      chars[len - 2] = 'A';
+      2;
+    } else if (chars[len - 1] == '=') {
+      chars[len - 1] = 'A';
+      1;
+    } else {
+      0;
+    };
 
   let (_, bytes) =
     Array.fold_left(
@@ -107,5 +112,5 @@ let decode = (enc: encoding, str: string): array(char) => {
       (0, [||]),
       chars,
     );
-  bytes;
+  Array.sub(bytes, 0, Array.length(bytes) - rm);
 };

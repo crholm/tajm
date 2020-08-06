@@ -16,7 +16,7 @@ Glob.glob(
               let data = Tajm_Functions_Array.of_string(str);
               let loc = Tajm_Iana_Encoding.unmarshal_binary(name, data);
               let locStr = Tajm_Iana_Encoding.marshal(loc);
-              acc ++ locStr ++ "\n";
+              acc @ [locStr];
             }) {
             | _ =>
               Js.log("|- Failed " ++ file ++ ", probably a dir");
@@ -26,9 +26,25 @@ Glob.glob(
             acc;
           };
         },
-        "",
+        [],
         files,
-      );
-    Node.Fs.writeFileAsUtf8Sync("./data/iana-latest.txt", res);
+      )
+      |> Array.of_list;
+
+    Node.Fs.writeFileAsUtf8Sync(
+      "./data/iana-latest.txt",
+      Tajm_Functions_Strings.join("\n", res),
+    );
+    let str =
+      "open Tajm_Iana_Tz.Lazy;\n"
+      ++ "let data = [|\n"
+      ++ Array.fold_left(
+           (acc, a) => {acc ++ "{name:\"" ++ String.sub(a, 0, String.index(a, '|')) ++ "\", raw:\"" ++ a ++ "\"},\n"},
+           "",
+           res,
+         )
+      ++ "|];"
+    Node.Fs.writeFileAsUtf8Sync("./src/iana/lib/Tajm_Iana_Lib_All.re", str);
+    ();
   },
 );

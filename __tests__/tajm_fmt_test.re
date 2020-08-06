@@ -208,9 +208,9 @@ describe("Tajm fmt", () => {
       Js.log2(">", a);
       a;
     };
-    //         Month       | month   | day     | hour       | min     | sec
-    let fmt = "Jan January | 1 01 _1 | 2 02 _2 | 15 3 03 _3 PM | 4 04 _4 | 5 05 _5";
-    make(~y=2020, ~m=February, ~d=4, ~hour=13, ~min=7, ~sec=9, ~ms=30, z)
+    //         Month       | month   | day     | hour          | min     | sec     | tz   
+    let fmt = "Jan January | 1 01 _1 | 2 02 _2 | 15 3 03 _3 PM | 4 04 _4 | 5 05 _5 | Z07 Z0700 Z07:00 -07 -0700 -07:00";
+    make(~y=2020, ~m=February, ~d=4, ~hour=13, ~min=7, ~sec=9, ~ms=30, Fixed("CET", (60+30)*60))
     |> format(fmt)
     |> log
     |> parse(fmt)
@@ -222,7 +222,7 @@ describe("Tajm fmt", () => {
     |> format(fmt)
     |> expect
     |> toBe(
-         "Feb February | 2 02  2 | 4 04  4 | 13 1 01  1 PM | 7 07  7 | 9 09  9",
+         "Feb February | 2 02  2 | 4 04  4 | 13 1 01  1 PM | 7 07  7 | 9 09  9 | +01 +0130 +01:30 +01 +0130 +01:30",
        );
   });
 });
