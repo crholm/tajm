@@ -17,11 +17,19 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 #### `let atUTC = (t: time_) => time_`
 #### `let atFixed = (t: time_) => time_`
 #### `let zone = (t: time_) => location_`
-#### `let location: (name: string) => option(location_)
+#### `let location: (name: string) => option(location_)`
 #### `let zero = () => time_`
 
 #### `let unix: (t: time_) => float`
 #### `let ofUnix: (f: float) => time_`
+#### ```let make: (~y as year: option(int)=?,
+      ~m as month: option(month_)=?,
+      ~d as day: option(int)=?,
+      ~hour: option(int)=?,
+      ~min: option(int)=?,
+      ~sec: option(int)=?,
+      ~ms: option(int)=?,
+      loc: location_,) => time_```
 
 
 
@@ -66,12 +74,11 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 #### `let  sameMillisecond: (t: time_) => bool`
 
 
-### Tajm.Days
 ### Tajm.Conv
 
 
 ### Types
-```reasonml
+```reason
 type time_ = {
   t: int64,
   loc: location_,
@@ -79,12 +86,12 @@ type time_ = {
 ```
 
 
-```reasonml
+```reason
 type duration_ = float;
 ```
 
 
-```reasonml
+```reason
 type month_ =
   | January
   | February
@@ -101,7 +108,7 @@ type month_ =
 ```
 
 
-```reasonml 
+```reason
 type weekday_ =
   | Monday
   | Tuesday
@@ -112,8 +119,7 @@ type weekday_ =
   | Sunday;
   ```
 
-
-```reasonml
+```reason
 type location_ =
   | Fixed(string, int)     // (name, offset) in secound, Fixed("CET", 3600)
   | Local                  // Uses the local location defined by the environment
