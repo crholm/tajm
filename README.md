@@ -68,6 +68,14 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 
 ### Tajm.Duration
 
+#### `let millisecond: duration_`
+#### `let secound: duration_`
+#### `let minute: duration_`
+#### `let hour: duration_`
+
+#### `let truncate: (m: duration_, d: duration_) => duration_`
+#### `let string: (d: duration_) => string`
+#### `let parse: (d: string) => duration_`
 
 ### Tajm.Is
 #### `let  equal: (t1: time_, t2: time_) => bool`
@@ -103,6 +111,17 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 
 
 ### Tajm.Conv
+#### `let stringOfWeekday: (weekday: weekday_) => string`
+#### `let stringOfWeekdayShort: (weekday: weekday_) => string`
+#### `let intOfWeekday: (weekday: weekday_) => int`
+#### `let weekdayOfInt: (i: int) => weekday_`
+#### `let intOfMonth: (month: month_) => int`
+#### `let monthOfInt: (i: int) => month_`
+#### `let monthOfStringShort: (m: string) => month_`
+#### `let stringOfMonth: (month: month_) => string`
+#### `let stringShortOfMonth: (month: month_) => string`
+#### `let daysInYear: (year: int) => int`
+#### `let daysInMonth: (year: int, month: month_) => int`
 
 
 ### Types
