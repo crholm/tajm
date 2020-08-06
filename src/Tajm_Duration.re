@@ -1,5 +1,5 @@
 open Tajm_Type;
-open Tajm_Util;
+module Lists = Tajm_Functions_List;
 
 let millisecond: duration_ = 1.0;
 let secound: duration_ = 1000. *. millisecond;
@@ -67,13 +67,13 @@ let parse = (_d: string): duration_ => {
           String.sub(_d, si + 1, msi - si - 1)
           |> (
             s => {
-              let l = s |> _listOfString |> _dropRightWhile(c => c == '0');
+              let l = s |> Lists.of_string |> Lists.dropRightWhile(c => c == '0');
 
               let divisor =
-                l |> _takeWhile(c => c == '0') |> List.length |> float_of_int;
+                l |> Lists.takeWhile(c => c == '0') |> List.length |> float_of_int;
 
               l
-              |> _stringOfList
+              |> Lists.to_string
               |> float_of_string
               |> (f => f *. 100. /. 10. ** divisor);
             }

@@ -2,7 +2,8 @@ open Tajm_Type;
 open Tajm_Const;
 
 open Tajm_Conv;
-open Tajm_Util;
+
+module Options = Tajm_Functions_List_Option;
 
 let compare = (t1: time_, t2: time_) => Int64.compare(t1.t, t2.t);
 let at = (loc: location_, t: time_) => {
@@ -56,16 +57,16 @@ let make =
     : time_ => {
   let d =
     Tajm_Kernel.withYMDHMS(
-      ~year=float_of_int(year |> _valueOr(0)),
-      ~month=float_of_int(intOfMonth(month |> _valueOr(January)) - 1),
-      ~date=float_of_int(day |> _valueOr(1)),
-      ~hours=float_of_int(hour |> _valueOr(0)),
-      ~minutes=float_of_int(min |> _valueOr(0)),
-      ~seconds=float_of_int(sec |> _valueOr(0)),
+      ~year=float_of_int(year |> Options.valueOr(0)),
+      ~month=float_of_int(intOfMonth(month |> Options.valueOr(January)) - 1),
+      ~date=float_of_int(day |> Options.valueOr(1)),
+      ~hours=float_of_int(hour |> Options.valueOr(0)),
+      ~minutes=float_of_int(min |> Options.valueOr(0)),
+      ~seconds=float_of_int(sec |> Options.valueOr(0)),
       loc,
     );
 
-  let msf = ms |> _valueOr(0) |> Int64.of_int;
+  let msf = ms |> Options.valueOr(0) |> Int64.of_int;
 
   {...d, t: Int64.add(d.t, msf)};
 };
@@ -115,57 +116,40 @@ let past = (t: time_): bool => {
 };
 
 let weekday = (t: time_): weekday_ => {
-  // TODO apply timezone adjustment
   let d = (t |> Tajm_Kernel.getDay |> int_of_float) - 1;
   (d == (-1) ? 6 : d) |> weekdayOfInt;
 };
-let _weekday = weekday;
 
 let year = (t: time_): int => {
-  // TODO apply timezone adjustment
   t |> Tajm_Kernel.getFullYear |> int_of_float;
 };
-let _year = year;
 
 let month = (t: time_): month_ => {
-  // TODO apply timezone adjustment
   (t |> Tajm_Kernel.getMonth |> int_of_float) + 1 |> monthOfInt;
 };
-let _month = month;
 
 // Day of month
 let day = (t: time_): int => {
-  // TODO apply timezone adjustment
   t |> Tajm_Kernel.getDate |> int_of_float;
 };
-let _day = day;
 
 let hour = (t: time_): int => {
-  // TODO apply timezone adjustment
   t |> Tajm_Kernel.getHours |> int_of_float;
 };
-let _hour = hour;
 
 let minute = (t: time_): int => {
-  // TODO apply timezone adjustment
   t |> Tajm_Kernel.getMinutes |> int_of_float;
 };
-let _minute = minute;
 
 let second = (t: time_): int => {
-  // TODO apply timezone adjustment
   t |> Tajm_Kernel.getSeconds |> int_of_float;
 };
-let _second = second;
 
 let millisecond = (t: time_): int => {
-  // TODO apply timezone adjustment
   t |> Tajm_Kernel.getMilliseconds |> int_of_float;
 };
-let _millisecond = millisecond;
 
 let yearDay = (t: time_): int => {
-  // TODO apply timezone adjustment
   let year = year(t);
   let rec calc = (acc, month) => {
     month < 1
@@ -212,13 +196,13 @@ let set =
     )
     : time_ => {
   make(
-    ~y=y |> _valueOr(year(t)),
-    ~m=m |> _valueOr(month(t)),
-    ~d=d |> _valueOr(day(t)),
-    ~hour=h |> _valueOr(hour(t)),
-    ~min=min |> _valueOr(minute(t)),
-    ~sec=sec |> _valueOr(second(t)),
-    ~ms=ms |> _valueOr(millisecond(t)),
+    ~y=y |> Options.valueOr(year(t)),
+    ~m=m |> Options.valueOr(month(t)),
+    ~d=d |> Options.valueOr(day(t)),
+    ~hour=h |> Options.valueOr(hour(t)),
+    ~min=min |> Options.valueOr(minute(t)),
+    ~sec=sec |> Options.valueOr(second(t)),
+    ~ms=ms |> Options.valueOr(millisecond(t)),
     t.loc,
   );
 };
@@ -242,9 +226,9 @@ let addDate =
   let _n =
     Tajm_Kernel.setUTCFullYearMD(
       t |> Tajm_Kernel.toJs,
-      ~year=float_of_int(y + (years |> _valueOr(0))),
-      ~month=float_of_int(m + (months |> _valueOr(0))),
-      ~date=float_of_int(d + (days |> _valueOr(0))),
+      ~year=float_of_int(y + (years |> Options.valueOr(0))),
+      ~month=float_of_int(m + (months |> Options.valueOr(0))),
+      ~date=float_of_int(d + (days |> Options.valueOr(0))),
       (),
     )
     |> ofUnix;

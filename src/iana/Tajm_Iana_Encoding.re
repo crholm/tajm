@@ -1,5 +1,5 @@
 module Arrays = Tajm_Functions_Array;
-module Strings = Tajm_Functions_Strings;
+module Strings = Tajm_Functions_String;
 module Binary = Tajm_Functions_Binary;
 module Base64 = Tajm_Functions_Base64;
 

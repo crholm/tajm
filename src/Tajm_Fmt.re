@@ -1,7 +1,9 @@
-open Tajm_Util;
 open Tajm_Type;
 open Tajm_Conv;
 open Tajm_Func;
+
+module Lists = Tajm_Functions_List;
+module Strings = Tajm_Functions_String;
 
 type token =
   | LongMonth // = "January";
@@ -121,10 +123,10 @@ let tokenOfString = (s: string): token => {
 };
 
 let peek = (i: int, s: string): string => {
-  String.sub(s, 0, min(i, s |> _len));
+  String.sub(s, 0, min(i, s |> String.length));
 };
 let strip = (i: int, s: string): string => {
-  let l = s |> _len;
+  let l = s |> String.length;
   String.sub(s, i, l - i);
 };
 let poll = (i: int, s: string): (string, string) => {
@@ -132,7 +134,7 @@ let poll = (i: int, s: string): (string, string) => {
 };
 
 let rec unk = (acc: string, rem: string): (string, string) =>
-  if (rem |> _len == 0) {
+  if (rem |> String.length == 0) {
     (acc, rem);
   } else if (peek(1, rem) |> crtl) {
     (acc, rem);
@@ -148,13 +150,13 @@ let rec tokenize = (acc: list(token), s: string): list(token) => {
     tokenize(acc @ [Unkown(u)], rem);
   };
 
-  s |> _len == 0
+  s |> String.length == 0
     ? acc
     : (
       switch (peek(1, s)) {
       | "J" =>
-        let i = "January" |> _len;
-        let ii = "Jan" |> _len;
+        let i = "January" |> String.length;
+        let ii = "Jan" |> String.length;
         if (peek(i, s) == "January") {
           tokenize(acc @ [LongMonth], strip(i, s));
         } else if (peek(ii, s) == "Jan") {
@@ -163,8 +165,8 @@ let rec tokenize = (acc: list(token), s: string): list(token) => {
           parseUnknown(1, s);
         };
       | "M" =>
-        let i = "Monday" |> _len;
-        let ii = "Mon" |> _len;
+        let i = "Monday" |> String.length;
+        let ii = "Mon" |> String.length;
         if (peek(i, s) == "Monday") {
           tokenize(acc @ [LongWeekDay], strip(i, s));
         } else if (peek(ii, s) == "Mon") {
@@ -240,18 +242,18 @@ let rec tokenize = (acc: list(token), s: string): list(token) => {
         | ".0" =>
           let l =
             strip(1, s)
-            |> _listOfString
-            |> _takeWhile(c => c == '0')
+            |> Lists.of_string
+            |> Lists.takeWhile(c => c == '0')
             |> List.length
-            |> _min(3);
+            |> min(3);
           tokenize(acc @ [FracSecond0(l)], strip(l + 1, s));
         | ".9" =>
           let l =
             strip(1, s)
-            |> _listOfString
-            |> _takeWhile(c => c == '9')
+            |> Lists.of_string
+            |> Lists.takeWhile(c => c == '9')
             |> List.length
-            |> _min(3);
+            |> min(3);
           tokenize(acc @ [FracSecond9(l)], strip(l + 1, s));
         | _ => parseUnknown(1, s)
         }
@@ -293,21 +295,21 @@ let printer = (t: time_, tokens: list(token)) => {
            | Month => t |> month |> stringShortOfMonth
            | NumMonth => t |> month |> intOfMonth |> string_of_int
            | ZeroMonth =>
-             t |> month |> intOfMonth |> string_of_int |> _leftPad(2, '0')
+             t |> month |> intOfMonth |> string_of_int |> Strings.leftPad(2, '0')
            | RightMonth =>
-             t |> month |> intOfMonth |> string_of_int |> _leftPad(2, ' ')
+             t |> month |> intOfMonth |> string_of_int |> Strings.leftPad(2, ' ')
            | LongWeekDay => t |> weekday |> stringOfWeekday
            | WeekDay => t |> weekday |> stringOfWeekdayShort
            | Day => t |> day |> string_of_int
-           | RightDay => t |> day |> string_of_int |> _leftPad(2, ' ')
-           | ZeroDay => t |> day |> string_of_int |> _leftPad(2, '0')
+           | RightDay => t |> day |> string_of_int |> Strings.leftPad(2, ' ')
+           | ZeroDay => t |> day |> string_of_int |> Strings.leftPad(2, '0')
            | YearDay => t |> yearDay |> string_of_int
-           | RightYearDay => t |> yearDay |> string_of_int |> _leftPad(3, ' ')
-           | ZeroYearDay => t |> yearDay |> string_of_int |> _leftPad(3, '0')
-           | Hour => t |> hour |> string_of_int |> _leftPad(2, '0')
+           | RightYearDay => t |> yearDay |> string_of_int |> Strings.leftPad(3, ' ')
+           | ZeroYearDay => t |> yearDay |> string_of_int |> Strings.leftPad(3, '0')
+           | Hour => t |> hour |> string_of_int |> Strings.leftPad(2, '0')
            | NumWeekDay => (t |> weekday |> intOfWeekday) + 1 |> string_of_int
-           | ZeroYearWeek => t |> week |> string_of_int |> _leftPad(2, '0')
-           | RightYearWeek => t |> week |> string_of_int |> _leftPad(2, ' ')
+           | ZeroYearWeek => t |> week |> string_of_int |> Strings.leftPad(2, '0')
+           | RightYearWeek => t |> week |> string_of_int |> Strings.leftPad(2, ' ')
            | YearWeek => t |> week |> string_of_int
            | Hour12 =>
              let h = t |> hour;
@@ -316,35 +318,35 @@ let printer = (t: time_, tokens: list(token)) => {
              let h = t |> hour;
              (h == 0 ? 12 : h / 13 + h mod 13)
              |> string_of_int
-             |> _leftPad(2, '0');
+             |> Strings.leftPad(2, '0');
            | RightHour12 =>
              let h = t |> hour;
              (h == 0 ? 12 : h / 13 + h mod 13)
              |> string_of_int
-             |> _leftPad(2, ' ');
+             |> Strings.leftPad(2, ' ');
            | Minute => t |> minute |> string_of_int
-           | ZeroMinute => t |> minute |> string_of_int |> _leftPad(2, '0')
-           | RightMinute => t |> minute |> string_of_int |> _leftPad(2, ' ')
+           | ZeroMinute => t |> minute |> string_of_int |> Strings.leftPad(2, '0')
+           | RightMinute => t |> minute |> string_of_int |> Strings.leftPad(2, ' ')
            | Second => t |> second |> string_of_int
-           | ZeroSecond => t |> second |> string_of_int |> _leftPad(2, '0')
-           | RightSecond => t |> second |> string_of_int |> _leftPad(2, ' ')
+           | ZeroSecond => t |> second |> string_of_int |> Strings.leftPad(2, '0')
+           | RightSecond => t |> second |> string_of_int |> Strings.leftPad(2, ' ')
            | LongYear => t |> year |> string_of_int
            | Year =>
-             let y = t |> year |> string_of_int |> _leftPad(4, '0');
+             let y = t |> year |> string_of_int |> Strings.leftPad(4, '0');
              String.sub(y, 2, 2);
            | PM(upper) =>
              t |> hour < 12 ? upper ? "AM" : "am" : upper ? "PM" : "pm"
            | FracSecond0(i) =>
-             "." ++ (t |> millisecond |> string_of_int |> _leftPad(i, '0'))
+             "." ++ (t |> millisecond |> string_of_int |> Strings.leftPad(i, '0'))
            | FracSecond9(i) =>
              let str =
                t
                |> millisecond
                |> string_of_int
-               |> _leftPad(i, '0')
-               |> _listOfString
-               |> _dropRightWhile(c => c == '0')
-               |> _stringOfList;
+               |> Strings.leftPad(i, '0')
+               |> Lists.of_string
+               |> Lists.dropRightWhile(c => c == '0')
+               |> Lists.to_string;
              String.length(str) == 0 ? "" : "." ++ str;
            // TZ stuff to do ...
            | TZ => t |> Tajm_Kernel.getTZName
@@ -353,37 +355,37 @@ let printer = (t: time_, tokens: list(token)) => {
              off == 0
                ? "Z"
                : (off < 0 ? "-" : "+")
-                 ++ (abs(off) / 60 |> string_of_int |> _leftPad(2, '0'));
+                 ++ (abs(off) / 60 |> string_of_int |> Strings.leftPad(2, '0'));
            | ISO8601TZ =>
              let off = tzOffset();
              off == 0
                ? "Z"
                : (off < 0 ? "-" : "+")
-                 ++ (off / 60 |> string_of_int |> _leftPad(2, '0'))
-                 ++ (off mod 60 |> string_of_int |> _leftPad(2, '0'));
+                 ++ (off / 60 |> string_of_int |> Strings.leftPad(2, '0'))
+                 ++ (off mod 60 |> string_of_int |> Strings.leftPad(2, '0'));
            | ISO8601ColonTZ =>
              let off = tzOffset();
              off == 0
                ? "Z"
                : (off < 0 ? "-" : "+")
-                 ++ (abs(off) / 60 |> string_of_int |> _leftPad(2, '0'))
+                 ++ (abs(off) / 60 |> string_of_int |> Strings.leftPad(2, '0'))
                  ++ ":"
-                 ++ (abs(off) mod 60 |> string_of_int |> _leftPad(2, '0'));
+                 ++ (abs(off) mod 60 |> string_of_int |> Strings.leftPad(2, '0'));
            | NumShortTZ =>
              let off = tzOffset();
              (off < 0 ? "-" : "+")
-             ++ (abs(off) / 60 |> string_of_int |> _leftPad(2, '0'));
+             ++ (abs(off) / 60 |> string_of_int |> Strings.leftPad(2, '0'));
            | NumTZ =>
              let off = tzOffset();
              (off < 0 ? "-" : "+")
-             ++ (abs(off) / 60 |> string_of_int |> _leftPad(2, '0'))
-             ++ (abs(off) mod 60 |> string_of_int |> _leftPad(2, '0'));
+             ++ (abs(off) / 60 |> string_of_int |> Strings.leftPad(2, '0'))
+             ++ (abs(off) mod 60 |> string_of_int |> Strings.leftPad(2, '0'));
            | NumColonTZ =>
              let off = tzOffset();
              (off < 0 ? "-" : "+")
-             ++ (abs(off) / 60 |> string_of_int |> _leftPad(2, '0'))
+             ++ (abs(off) / 60 |> string_of_int |> Strings.leftPad(2, '0'))
              ++ ":"
-             ++ (abs(off) mod 60 |> string_of_int |> _leftPad(2, '0'));
+             ++ (abs(off) mod 60 |> string_of_int |> Strings.leftPad(2, '0'));
            | Unkown(s) => s
            }
          )
