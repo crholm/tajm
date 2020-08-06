@@ -8,7 +8,7 @@ type test = {
 };
 
 let str = Node.Fs.readFileSync("data/latest/Europe/Stockholm", `binary);
-let data = Tajm_Iana_Encoding.from_string(str);
+let data = Tajm_Functions_Array.of_string(str);
 let stockholm = Tajm_Iana_Encoding.unmarshal_binary("Europe/Stockholm", data);
 Tajm_Iana.loadLocation(stockholm);
 
@@ -68,4 +68,11 @@ describe("IANA", () => {
          //  t1 |> expect |> toBe(t1);
        })
      });
+
+  Tajm_Iana.getLocation("Europe/Stockholm")
+  |> (
+    fun
+    | Some(i) => Js.log(i |> Tajm_Iana_Encoding.marshal)
+    | None => raise(Failure("Could not find timezone"))
+  );
 });

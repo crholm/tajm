@@ -1,8 +1,8 @@
 #!/bin/bash
 
  ## Download
-rm -r ./data
-mkdir -p data/latest
+rm -r ./data/iana-latest
+mkdir -p ./data/iana-latest
 mkdir -p tmp/zic
 cd tmp
 curl 'ftp://ftp.iana.org/tz/tzdata-latest.tar.gz' > tzdata-latest.tar.gz
@@ -17,7 +17,9 @@ echo Compiling $name
 zic -d zic $name
 done
 
-mv ./zic/* ../data/latest
+mv ./zic/* ../data/iana-latest
 cd ..
 rm -r tmp
 
+bsb
+node lib/js/tools/Generate_Iana.js
