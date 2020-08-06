@@ -4,9 +4,9 @@ let period = (i: tz, f: float): int => {
   let len = i.transitions |> Array.length;
   let rec find = (n: int) =>
     if (n == len) {
-      n - 1;
+      max(n - 1, 0);
     } else if (f < i.transitions[n]) {
-      n - 1;
+      max(n - 1, 0);
     } else {
       find(n + 1);
     };
@@ -23,6 +23,7 @@ let abbr = (i: tz, period: int): string => {
   i.abbrev[abbrev_idx];
 };
 
+// Should be replaced by a key value store... Map or such
 let db = ref([||]: array(tz));
 let dbz = ref([||]: array(Lazy.tz));
 
@@ -31,6 +32,13 @@ let loadLocations = (tzs: array(tz)) => {
 };
 let loadLocation = (tz: tz) => {
   loadLocations([|tz|]);
+};
+
+let lazyLoadLocations = (tzs: array(Lazy.tz)) => {
+  dbz := Array.append(tzs, dbz^);
+};
+let lazyLoadLocation = (tz: Lazy.tz) => {
+  lazyLoadLocations([|tz|]);
 };
 
 let getLocation = (name: string): option(tz) => {
@@ -47,11 +55,4 @@ let getLocation = (name: string): option(tz) => {
     | None => None
     };
   };
-};
-
-let lazyLoadLocations = (tzs: array(Lazy.tz)) => {
-  dbz := Array.append(tzs, dbz^);
-};
-let lazyLoadLocation = (tz: Lazy.tz) => {
-  lazyLoadLocations([|tz|]);
 };

@@ -7,7 +7,7 @@ type test = {
   expPrior: string,
 };
 
-Tajm_Iana.lazyLoadLocations(Tajm_Iana_Lib_All.data);
+Tajm_Iana.lazyLoadLocations(Tajm_Iana_Lib_Europe.data);
 
 describe("IANA", () => {
   let fmt = "2006-01-02T15:04:05 -07:00 MST";
@@ -51,24 +51,11 @@ describe("IANA", () => {
            );
 
          let t1 = entry.t |> Tajm.ofUnix |> Tajm.at(IANA(loc));
-
          let s1 = t1 |> Tajm.format(fmt);
 
          let s2 =
            t1 |> Tajm.add(-. Tajm.Duration.millisecond) |> Tajm.format(fmt);
-
-         //  Array.iter2(Js.log2, loc.transitions, loc.zone_idxs);
-         //  Js.log(loc.zones);
-
          [s1, s2] |> expect |> toEqual([entry.expAt, entry.expPrior]);
-         //  Js.log(fmt);
-         //  t1 |> expect |> toBe(t1);
        })
      });
-  // Tajm_Iana.getLocation("Europe/Stockholm")
-  // |> (
-  //   fun
-  //   | Some(i) => Js.log(i |> Tajm_Iana_Encoding.marshal)
-  //   | None => raise(Failure("Could not find timezone"))
-  // );
 });

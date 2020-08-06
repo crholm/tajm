@@ -7,30 +7,51 @@ describe("marshal", () => {
   // Js.log(1);
   let data = Tajm_Functions_Array.of_string(str);
   // Js.log(2);
-  let stockholm =
-    Tajm_Iana_Encoding.unmarshal_binary("Europe/Stockholm", data);
+  let tz = Tajm_Iana_Encoding.unmarshal_binary("Europe/Stockholm", data);
+
+  let len = Array.length(tz.transitions);
+  let count =
+    Array.fold_left((acc, f) => f < 0. ? acc + 1 : acc, 0, tz.transitions);
+  let tz = {
+    ...tz,
+    transitions: Array.sub(tz.transitions, count, len - count),
+    zone_idxs: Array.sub(tz.zone_idxs, count, len - count),
+  };
+
   // Js.log(3);
-  let str = Tajm_Iana_Encoding.marshal(stockholm);
+  let str = Tajm_Iana_Encoding.marshal(tz);
   // Js.log(4);
-  let stockholm2 = Tajm_Iana_Encoding.unmarshal(str);
+  let tz2 = Tajm_Iana_Encoding.unmarshal(str);
   // Js.log(5);
 
   test("abbrev", () => {
-    stockholm.abbrev |> expect |> toEqual(stockholm2.abbrev)
+    tz.abbrev |> expect |> toEqual(tz2.abbrev)
   });
 
   test("zones", () => {
-    stockholm.zones |> expect |> toEqual(stockholm2.zones)
+    tz.zones |> expect |> toEqual(tz2.zones)
   });
   test("zone_idxs", () => {
-    stockholm.zone_idxs |> expect |> toEqual(stockholm2.zone_idxs)
+    tz.zone_idxs |> expect |> toEqual(tz2.zone_idxs)
   });
   test("name", () => {
-    stockholm.name |> expect |> toEqual(stockholm2.name)
+    tz.name |> expect |> toEqual(tz2.name)
   });
 
-  test("abbrev", () => {
-    stockholm.transitions |> expect |> toEqual(stockholm2.transitions);
+  test("transitions", () => {
+    tz.transitions |> expect |> toEqual(tz2.transitions)
+  });
+  test("elements 1", () => {
+    tz.transitions
+    |> Array.length
+    |> expect
+    |> toEqual(tz2.zone_idxs |> Array.length)
+  });
+  test("elements 2", () => {
+    tz.zone_idxs
+    |> Array.length
+    |> expect
+    |> toEqual(tz2.transitions |> Array.length)
   });
 });
 

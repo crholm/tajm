@@ -1,0 +1,54 @@
+Africa/Abidjan|LMT GMT|-968:0 0:1||
+Africa/Accra|LMT +0020 GMT|-52:0 1200:1 0:2||
+Africa/Addis_Ababa|LMT EAT +0230 +0245|8836:0 10800:1 9000:2 9900:3 10800:1||
+Africa/Algiers|LMT PMT WEST WET CEST CET|732:0 561:1 3600:2 0:3 0:3 7200:4 3600:5 3600:2|2376564746|AnjB8A== A0PI8A== Dc/XAA== Dq1E8A== D3haAA== EGhZEA== EnZDcA== E2ZCgA== FF98EA== FU9fAA==
+Africa/Asmara|LMT EAT +0230 +0245|8836:0 10800:1 9000:2 9900:3 10800:1||
+Africa/Asmera|LMT EAT +0230 +0245|8836:0 10800:1 9000:2 9900:3 10800:1||
+Africa/Bamako|LMT GMT|-968:0 0:1||
+Africa/Bangui|LMT WAT|816:0 3600:1||
+Africa/Banjul|LMT GMT|-968:0 0:1||
+Africa/Bissau|LMT -01 GMT|-3740:0 -3600:1 0:2|2|CWdhEA==
+Africa/Blantyre|LMT CAT|7820:0 7200:1||
+Africa/Brazzaville|LMT WAT|816:0 3600:1||
+Africa/Bujumbura|LMT CAT|7820:0 7200:1||
+Africa/Cairo|LMT EEST EET|7509:0 10800:1 7200:2 10800:1|1212121212121212121212121212121212121212121212121232323232323232323232323232323232121212|niXw AWfpgA== An9ZcA== A0kdAA== BGHecA== BSuiAA== BkMR8A== BwzVgA== CCRFcA== CO4JAA== CgV48A== Cs88gA== C+f98A== DLHBgA== DckxcA== DpL1AA== D6pk8A== EHQogA== EYuYcA== ElVcAA== E24dcA== FDfhAA== FU9Q8A== FhkUgA== F6CT8A== F/pIAA== GXCj8A== Gdt7gA== GvQ88A== G74AgA== HNVwcA== HZ80AA== Hraj8A== H4BngA== IJfXcA== IWGbAA== InpccA== I0QgAA== JGIncA== JSVTgA== JjzDcA== JwaHAA== KB328A== KOe6gA== KgB78A== Kso/gA== K+GvcA== LKtzAA== LcLi8A== LoymgA== L6AT4A== MGsM0A== MX/14A== Mkru0A== M1/X4A== NCrQ0A== NT+54A== Ngqy0A== NyjWYA== N/PPUA== OQi4YA== OdOxUA== OuiaYA== O7OTUA== PMh8YA== PZN1UA== PqheYA== P3NXUA== QJF64A== QVxz0A== QnFc4A== QzxV0A== RFE+4A== RRL9UA== RjEg4A== RuBqUA== SBEC4A== SLcR0A== SfDk4A== So25UA== S9oBYA== TGG90A== TIlY4A== TKT6UA== U3U44A== U6yJ0A== U9q8YA== VCSCUA==
+Africa/Casablanca|LMT +01 +00|-1820:0 3600:1 0:2 3600:1 0:2|12121212321212121212121212121212121212121212134343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343|CGuEgA== CMZt8A== C+gMAA== DGFH8A== Dck/gA== Do7ycA== D9NRgA== ECejcA== GremAA== Hhhv8A== SEHmgA== SLsicA== SiMaAA== So3VcA== S9zAgA== TF3lcA== TZe4gA== TjSM8A== T5ygoA== UAi7oA== UDGaIA== UGenoA== UXyCoA== UdjLoA== UgWeoA== UmxzoA== Uzd6oA== U64hoA== U9xGIA== VExVoA== VRdcoA== VXzgIA== VasEoA== Viw3oA== Vvc+oA== V1OHoA== V4GsIA== WBVUIA== WNcgoA== WSD0oA== WVhToA== WfU2IA== WrcCoA== WvecIA== WyXAoA== W9UYIA== XM5DoA== XPxoIA== XpuwoA== XtMPoA== YHJYIA== YKB8oA== Yj/FIA== YnckIA== ZBZsoA== ZESRIA== Ze0UIA== Zhs4oA== Z7qBIA== Z/HgIA== aZEooA== ab9NIA== a2fQIA== a5X0oA== bTU9IA== bWycIA== bwvkoA== bzoJIA== cNlRoA== cRCwoA== cq/5IA== ct4doA== dIagoA== dLTFIA== dlQNoA== dotsoA== eCq1IA== eFjZoA== efgiIA== ei+BIA== e87JoA== fAYooA== faVxIA== fdOVoA== f3LeIA== f6o9IA== gUmFoA== gXeqIA== gyAtIA== g05RoA== hO2aIA== hST5IA== hsRBoA== hvJmIA== iJGuoA== iMkNoA== imhWIA== ip+1IA== jD79oA== jG0iIA== jgxqoA== jkPJoA== j+MSIA== kBE2oA== kbm5oA== kefeIA== k4cmoA== k76FoA== lV3OIA== lYvyoA== lys7IA== l2KaIA== mQHioA== mTlBoA== mtiKIA== mwauoA== nKX3IA== nN1WIA== nnyeoA== nqrDIA== oFNGIA== oIFqoA== oiCzIA== olgSIA== o/daoA== pCV/IA== pcTHoA== pfwmoA== p5tvIA== p9LOIA== qXIWoA== qaA7IA== qz+DoA== q3bioA== rRYrIA== rURPoA== ruzSoA== rxr3IA== sLo/oA== sPGeoA== spDnIA== sr8LoA== tF5UIA== tJWzIA== tjT7oA== tmxaoA== uAujIA== uDnHoA== udkQIA== uhBvIA== u6+3oA== u93cIA== vYZfIA== vbSDoA== v1PMIA== v4srIA== wSpzoA== wViYIA== wvfgoA== wy8/oA== xM6IIA== xQXnIA== xqUvoA== xtNUIA== yHKcoA== yKn7oA== yklEIA== yndooA== zB/roA== zE4QIA== ze1YoA== ziS3oA== z8QAIA== z/IkoA== 0ZFtIA== 0cjMIA== 02gUoA== 05Y5IA== 1T68IA== 1WzgoA== 1wwpIA== 10OIIA== 2OLQoA== 2RD1IA== 2rl4IA== 2uecoA== 3IblIA== 3L5EIA==
+Africa/Ceuta|LMT WET WEST CET CEST|-1276:0 0:1 3600:2 0:1 3600:3 7200:4 3600:3|21212121456565656565656565656565656565656565656565656565656565656565656565656565656565656565656565656565656565656|CGuEgA== CMZt8A== C+gMAA== DGFH8A== Dck/gA== Do7ycA== D9NRgA== ECejcA== GremAA== HoyQEA== H3yBEA== IGxyEA== IVxjEA== IkxUEA== IzxFEA== JCw2EA== JRwnEA== JgwYEA== JwVDkA== J/U0kA== KOUlkA== KdUWkA== KsUHkA== K7T4kA== LKTpkA== LZTakA== LoTLkA== L3S8kA== MGStkA== MV3ZEA== MnK0EA== Mz27EA== NFKWEA== NR2dEA== NjJ4EA== Nv1/EA== OBuUkA== ON1hEA== Oft2kA== Or1DEA== O9tYkA== PKZfkA== Pbs6kA== PoZBkA== P5sckA== QGYjkA== QYQ5EA== QkYFkA== Q2QbEA== RCXnkA== RUP9EA== RgXJkA== RyPfEA== R+7mEA== SQPBEA== Sc7IEA== SuOjEA== S66qEA== TMy/kA== TY6MEA== TqyhkA== T25uEA== UIyDkA== UVeKkA== UmxlkA== UzdskA== VExHkA== VRdOkA== ViwpkA== VvcwkA== WBVGEA== WNcSkA== WfUoEA== Wrb0kA== W9UKEA== XKAREA== XbTsEA== Xn/zEA== X5TOEA== YF/VEA== YX3qkA== Yj+3EA== Y13MkA== ZB+ZEA== ZT2ukA== Zgi1kA== Zx2QkA== Z+iXkA== aP1ykA== ach5kA== at1UkA== a6hbkA== bMZxEA== bYg9kA== bqZTEA== b2gfkA== cIY1EA== cVE8EA== cmYXEA== czEeEA== dEX5EA== dREAEA== di8VkA== dvDiEA== eA73kA== eNDEEA== ee7ZkA== erCmEA== e867kA== fJnCkA== fa6dkA== fnmkkA== f45/kA==
+Africa/Conakry|LMT GMT|-968:0 0:1||
+Africa/Dakar|LMT GMT|-968:0 0:1||
+Africa/Dar_es_Salaam|LMT EAT +0230 +0245|8836:0 10800:1 9000:2 9900:3 10800:1||
+Africa/Djibouti|LMT EAT +0230 +0245|8836:0 10800:1 9000:2 9900:3 10800:1||
+Africa/Douala|LMT WAT|816:0 3600:1||
+Africa/El_Aaiun|LMT -01 +01 +00|-3168:0 -3600:1 3600:2 0:3 0:3 3600:2|32323232323232323232323232323232323232323254545454545454545454545454545454545454545454545454545454545454545454545454545454545454545454545454545454545454545454545454545454545454545454545|C9GwkA== C+gMAA== DGFH8A== Dck/gA== Do7ycA== D9NRgA== ECejcA== SEHmgA== SLsicA== SiMaAA== So3VcA== S9zAgA== TF3lcA== TZe4gA== TjSM8A== T5ygoA== UAi7oA== UDGaIA== UGenoA== UXyCoA== UdjLoA== UgWeoA== UmxzoA== Uzd6oA== U64hoA== U9xGIA== VExVoA== VRdcoA== VXzgIA== VasEoA== Viw3oA== Vvc+oA== V1OHoA== V4GsIA== WBVUIA== WNcgoA== WSD0oA== WVhToA== WfU2IA== WrcCoA== WvecIA== WyXAoA== W9UYIA== XM5DoA== XPxoIA== XpuwoA== XtMPoA== YHJYIA== YKB8oA== Yj/FIA== YnckIA== ZBZsoA== ZESRIA== Ze0UIA== Zhs4oA== Z7qBIA== Z/HgIA== aZEooA== ab9NIA== a2fQIA== a5X0oA== bTU9IA== bWycIA== bwvkoA== bzoJIA== cNlRoA== cRCwoA== cq/5IA== ct4doA== dIagoA== dLTFIA== dlQNoA== dotsoA== eCq1IA== eFjZoA== efgiIA== ei+BIA== e87JoA== fAYooA== faVxIA== fdOVoA== f3LeIA== f6o9IA== gUmFoA== gXeqIA== gyAtIA== g05RoA== hO2aIA== hST5IA== hsRBoA== hvJmIA== iJGuoA== iMkNoA== imhWIA== ip+1IA== jD79oA== jG0iIA== jgxqoA== jkPJoA== j+MSIA== kBE2oA== kbm5oA== kefeIA== k4cmoA== k76FoA== lV3OIA== lYvyoA== lys7IA== l2KaIA== mQHioA== mTlBoA== mtiKIA== mwauoA== nKX3IA== nN1WIA== nnyeoA== nqrDIA== oFNGIA== oIFqoA== oiCzIA== olgSIA== o/daoA== pCV/IA== pcTHoA== pfwmoA== p5tvIA== p9LOIA== qXIWoA== qaA7IA== qz+DoA== q3bioA== rRYrIA== rURPoA== ruzSoA== rxr3IA== sLo/oA== sPGeoA== spDnIA== sr8LoA== tF5UIA== tJWzIA== tjT7oA== tmxaoA== uAujIA== uDnHoA== udkQIA== uhBvIA== u6+3oA== u93cIA== vYZfIA== vbSDoA== v1PMIA== v4srIA== wSpzoA== wViYIA== wvfgoA== wy8/oA== xM6IIA== xQXnIA== xqUvoA== xtNUIA== yHKcoA== yKn7oA== yklEIA== yndooA== zB/roA== zE4QIA== ze1YoA== ziS3oA== z8QAIA== z/IkoA== 0ZFtIA== 0cjMIA== 02gUoA== 05Y5IA== 1T68IA== 1WzgoA== 1wwpIA== 10OIIA== 2OLQoA== 2RD1IA== 2rl4IA== 2uecoA== 3IblIA== 3L5EIA==
+Africa/Freetown|LMT GMT|-968:0 0:1||
+Africa/Gaborone|LMT CAT|7820:0 7200:1||
+Africa/Harare|LMT CAT|7820:0 7200:1||
+Africa/Johannesburg|LMT SAST|6720:0 5400:1 10800:1 7200:1||
+Africa/Juba|LMT CAST CAT EAT|7588:0 10800:1 7200:2 10800:3|121212121212121212121212121212123|nhfg AXo0UA== An354A== A1tn0A== BGB+4A== BT3s0A== BkBg4A== Bx8gUA== CCBC4A== CQBT0A== CgAk4A== CuGHUA== C+AG4A== DMQMUA== Db/o4A== DqU/0A== D6kFYA== EIZzUA== EYjnYA== Emem0A== E2jJYA== FEor0A== FUirYA== FitfUA== FyiNYA== GAyS0A== GQhvYA== Ge3GUA== GvGL4A== G9BLUA== HNFt4A== HbF+0A== OIBFIA==
+Africa/Kampala|LMT EAT +0230 +0245|8836:0 10800:1 9000:2 9900:3 10800:1||
+Africa/Khartoum|LMT CAST CAT EAT|7808:0 10800:1 7200:2 10800:3 7200:2|1212121212121212121212121212121232|nhfg AXo0UA== An354A== A1tn0A== BGB+4A== BT3s0A== BkBg4A== Bx8gUA== CCBC4A== CQBT0A== CgAk4A== CuGHUA== C+AG4A== DMQMUA== Db/o4A== DqU/0A== D6kFYA== EIZzUA== EYjnYA== Emem0A== E2jJYA== FEor0A== FUirYA== FitfUA== FyiNYA== GAyS0A== GQhvYA== Ge3GUA== GvGL4A== G9BLUA== HNFt4A== HbF+0A== OIBFIA== WfjkUA==
+Africa/Kigali|LMT CAT|7820:0 7200:1||
+Africa/Kinshasa|LMT WAT|816:0 3600:1||
+Africa/Lagos|LMT WAT|816:0 3600:1||
+Africa/Libreville|LMT WAT|816:0 3600:1||
+Africa/Lome|LMT GMT|-968:0 0:1||
+Africa/Luanda|LMT WAT|816:0 3600:1||
+Africa/Lubumbashi|LMT CAT|7820:0 7200:1||
+Africa/Lusaka|LMT CAT|7820:0 7200:1||
+Africa/Malabo|LMT WAT|816:0 3600:1||
+Africa/Maputo|LMT CAT|7820:0 7200:1||
+Africa/Maseru|LMT SAST|6720:0 5400:1 10800:1 7200:1||
+Africa/Mbabane|LMT SAST|6720:0 5400:1 10800:1 7200:1||
+Africa/Mogadishu|LMT EAT +0230 +0245|8836:0 10800:1 9000:2 9900:3 10800:1||
+Africa/Monrovia|LMT MMT GMT|-2588:0 -2588:1 -2670:1 0:2|3|A8pabg==
+Africa/Nairobi|LMT EAT +0230 +0245|8836:0 10800:1 9000:2 9900:3 10800:1||
+Africa/Ndjamena|LMT WAT WAST|3612:0 3600:1 7200:2|21|EmZxcA== EybeYA==
+Africa/Niamey|LMT WAT|816:0 3600:1||
+Africa/Nouakchott|LMT GMT|-968:0 0:1||
+Africa/Ouagadougou|LMT GMT|-968:0 0:1||
+Africa/Porto-Novo|LMT WAT|816:0 3600:1||
+Africa/Sao_Tome|LMT GMT WAT|1616:0 -2205:0 0:1 3600:2 0:1|34|WkmIEA== XCq7kA==
+Africa/Timbuktu|LMT GMT|-968:0 0:1||
+Africa/Tripoli|LMT CEST CET EET|3164:0 7200:1 3600:2 7200:3|212121212121212123213213|FpJCYA== Fwj3cA== F/or4A== GOoq8A== GdtfYA== Gsyv8A== G73kYA== HLR68A== HZ8X4A== HpMLcA== H4LuYA== IHBKcA== IWF+4A== IlLPcA== I0QD4A== JDQC8A== JSU3YA== JkC38A== Mk7xYA== M0Q2cA== NDVq4A== UJ2ZAA== UVTZgA== Umm0gA==
+Africa/Tunis|LMT PMT CEST CET|2444:0 561:1 7200:2 3600:3 3600:3 7200:2|232323232323232323|Dcff8A== DomscA== D6pk8A== EHQacA== IqM68A== Izwo8A== JCwZ8A== JRwK8A== JjzDcA== JwUncA== QnQN8A== QzyAAA== RCXnkA== RUP9EA== RgXJkA== RyPfEA== R+7mEA== SQPBEA==
+Africa/Windhoek|LMT +0130 SAST WAT CAT|4104:0 5400:1 7200:2 10800:2 3600:3 7200:4|5454545454545454545454545454545454545454545454545|Jgan4A== LYzHYA== LmkcEA== L33pAA== MEj+EA== MWcFgA== MijgEA== M0bngA== NBH8kA== NSbJgA== NfHekA== NwargA== N9HAkA== OOaNgA== ObGikA== OsZvgA== O5GEkA== PK+MAA== PXFmkA== Po9uAA== P1qDEA== QG9QAA== QTplEA== Qk8yAA== QxpHEA== RC8UAA== RPopEA== Rg72AA== RtoLEA== R/gSgA== SMMnkA== Sdf0gA== SqMJkA== S7fWgA== TILrkA== TZe4gA== TmLNkA== T3eagA== UEKvkA== UWC3AA== UiKRkA== U0CZAA== VAuuEA== VSB7AA== VeuQEA== VwBdAA== V8tyEA== WOA/AA== WatUEA==
