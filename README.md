@@ -22,14 +22,7 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 
 #### `let unix: (t: time_) => float`
 #### `let ofUnix: (f: float) => time_`
-#### ```let make: (~y as year: option(int)=?,
-      ~m as month: option(month_)=?,
-      ~d as day: option(int)=?,
-      ~hour: option(int)=?,
-      ~min: option(int)=?,
-      ~sec: option(int)=?,
-      ~ms: option(int)=?,
-      loc: location_,) => time_```
+#### `let make: (~y,~m, ~d, ~hour, ~min, ~sec, ~ms, loc) => time_`
 
 
 
