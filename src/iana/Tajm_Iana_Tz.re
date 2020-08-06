@@ -10,7 +10,7 @@ type tz = {
   zone_idxs: array(int),
   zones: array(zone),
   abbrev: array(string),
-  leap_seconds: array((float, int)),
-  isstds: array(bool),
-  isuts: array(bool),
+  // leap_seconds: array((float, int)),
+  // isstds: array(bool),
+  // isuts: array(bool),
 };

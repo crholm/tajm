@@ -1,67 +1,22 @@
-let to_string = (arr: array(char)): string => {
-  String.init(Array.length(arr), i => arr[i]);
-};
-let from_string = (str: string): array(char) => {
-  Array.init(String.length(str), i => str.[i]);
-};
-
-let split_string = (c: char, str: string) => {
-  let rec split = (str: string, acc: list(string)) =>
-    if (str == "") {
-      acc;
-    } else {
-      let len = String.length(str);
-      let i =
-        try(String.index(str, c)) {
-        | _ => len
-        };
-
-      let next = i == len ? "" : String.sub(str, i + 1, len - i - 1);
-      split(next, acc @ [String.sub(str, 0, i)]);
-    };
-  split(str, []) |> Array.of_list;
-};
+module Arrays = Tajm_Functions_Array;
+module Strings = Tajm_Functions_String;
+module Binary = Tajm_Functions_Binary;
+module Base64 = Tajm_Functions_Base64;
 
 let poll = (i, arr) => {
   let len = Array.length(arr);
   (Array.sub(arr, 0, i), Array.sub(arr, i, len - i));
 };
 
-let int_of_big_endian_bytes = arr => {
-  Array.fold_left((acc, b) => {acc lsl 8 lor int_of_char(b)}, 0, arr);
-};
-let int_of_little_endian_bytes = arr => {
-  Array.fold_right((b, acc) => {acc lsl 8 lor int_of_char(b)}, arr, 0);
-};
-
-let float_of_big_endian_bytes = arr => {
-  let len = Array.length(arr);
-
-  if (len == 8) {
-    Array.fold_left(
-      (acc, b) => {
-        let a = Int64.shift_left(acc, 8);
-        let bb = Int64.of_int(int_of_char(b));
-        Int64.logor(a, bb);
-      },
-      0L,
-      arr,
-    )
-    |> Int64.to_float;
-  } else {
-    int_of_big_endian_bytes(arr) |> float_of_int;
-  };
-};
-
-let read_untils = (arr: array(char), num: int, i64) => {
+let read_transitions = (arr: array(char), num: int, i64) => {
   let rec read = (acc: array(float), arr: array(char), num: int) =>
     if (num < 1) {
       (acc, arr);
     } else {
       let ilen = i64 ? 8 : 4;
       let (i, arr) = poll(ilen, arr);
-      let until = float_of_big_endian_bytes(i) *. 1000.;
-      acc[Array.length(acc) - num] = until;
+      let transitions = Binary.float_of_bytes(`big, i) *. 1000.;
+      acc[Array.length(acc) - num] = transitions;
       read(acc, arr, num - 1);
     };
   read(Array.make(num, 0.0), arr, num);
@@ -88,7 +43,7 @@ let read_zone_infos = (arr: array(char), num: int) => {
       let (desig, arr) = poll(1, arr);
       acc[Array.length(acc) - num] =
         Tajm_Iana_Tz.{
-          offset: int_of_big_endian_bytes(off),
+          offset: Binary.int_of_bytes(`big, off),
           dst: dst[0] == '\001',
           abbrev_idx: int_of_char(desig[0]),
         };
@@ -110,8 +65,8 @@ let read_leap_seconds = (arr: array(char), num: int, is64) => {
       let (at, arr) = poll(len, arr);
       let (seconds, arr) = poll(4, arr);
       acc[Array.length(acc) - num] = (
-        float_of_big_endian_bytes(at),
-        int_of_big_endian_bytes(seconds),
+        Binary.float_of_bytes(`big, at),
+        Binary.int_of_bytes(`big, seconds),
       );
       read(acc, arr, num - 1);
     };
@@ -145,7 +100,7 @@ let read_headers = (data: array(char)): (header, array(char)) => {
   //    * The magic four-byte ASCII sequence “TZif” identifies the file as a
   //      timezone information file.
   let (magicheader, data) = poll(4, data);
-  if (magicheader |> to_string != "TZif") {
+  if (magicheader |> Arrays.to_string != "TZif") {
     raise(Failure("dose not start with TZif"));
   };
 
@@ -168,45 +123,103 @@ let read_headers = (data: array(char)): (header, array(char)) => {
   //         The number of UT/local indicators stored in the file.  (UT
   //         is Universal Time.)
   let (i, data) = poll(4, data);
-  let n_utc_local = int_of_big_endian_bytes(i);
+  let n_utc_local = Binary.int_of_bytes(`big, i);
 
   //    tzh_ttisstdcnt
   //         The number of standard/wall indicators stored in the file.
 
   let (i, data) = poll(4, data);
-  let n_std_wall = int_of_big_endian_bytes(i);
+  let n_std_wall = Binary.int_of_bytes(`big, i);
 
   //    tzh_leapcnt
   //         The number of leap seconds for which data entries are stored in the file.
   let (i, data) = poll(4, data);
-  let n_leap = int_of_big_endian_bytes(i);
+  let n_leap = Binary.int_of_bytes(`big, i);
 
   //     tzh_timecnt
   //         The number of transition times for which data entries are stored in the file.
 
   let (i, data) = poll(4, data);
-  let n_time = int_of_big_endian_bytes(i);
+  let n_time = Binary.int_of_bytes(`big, i);
 
   //     tzh_typecnt
   //         The number of local time types for which data entries are stored in the file (must not be zero).
   let (i, data) = poll(4, data);
-  let n_zone = int_of_big_endian_bytes(i);
+  let n_zone = Binary.int_of_bytes(`big, i);
 
   //     tzh_charcnt
   //         The number of bytes of timezone abbreviation strings stored in the file.
   let (i, data) = poll(4, data);
-  let n_char = int_of_big_endian_bytes(i);
+  let n_char = Binary.int_of_bytes(`big, i);
   ({version, n_utc_local, n_std_wall, n_leap, n_time, n_zone, n_char}, data);
 };
 
 let marshal = (tz: Tajm_Iana_Tz.tz) => {
+  // let compressFloat = (f: float): string => {
+  //   let prefix = f < 0. ? "-" : "";
+  //   let i = Int64.of_float(f) |> Int64.abs;
+  //   let arr = Array.make(8, _ => '\000');
+
+  //   prefix;
+  // };
+
   let acc = tz.name ++ "|";
   let acc =
     acc
     ++ (
       Array.fold_left((acc, z) => acc ++ " " ++ z, "", tz.abbrev)
       |> String.trim
+    )
+    ++ "|";
+
+  let acc =
+    acc
+    ++ (
+      Array.fold_left(
+        (acc, z: Tajm_Iana_Tz.zone) =>
+          acc
+          ++ " "
+          ++ string_of_int(z.offset)
+          ++ ":"
+          ++ string_of_int(z.abbrev_idx),
+        "",
+        tz.zones,
+      )
+      |> String.trim
+    )
+    ++ "|";
+
+  let acc =
+    acc
+    ++ Array.fold_left(
+         (acc, z) => acc ++ Char.escaped(char_of_int(48 + z)),
+         "",
+         tz.zone_idxs,
+       )
+    ++ "|";
+
+  let acc =
+    acc
+    ++ (
+      Array.map(
+        z => {
+          let z = z /. 1000.;
+          let neg = z < 0.;
+          let z = abs_float(z);
+          let bytes = Binary.bytes_of_float(`big, z);
+          let bytes = Arrays.dropWhile(c => c == '\000', bytes);
+          let enc = Base64.encode(`std, bytes);
+          let enc =
+            Arrays.of_string(enc)
+            |> Arrays.dropRightWhile(a => a == '=')
+            |> Arrays.to_string;
+          (neg ? "-" : "") ++ enc;
+        },
+        tz.transitions,
+      )
+      |> Strings.join(" ")
     );
+
   acc;
 };
 
@@ -255,7 +268,7 @@ let unmarshal_binary = (name: string, data: array(char)) => {
   //          order.  These values are written in network byte order.  Each is
   //          used as a transition time (as returned by time(2)) at which the
   //          rules for computing local time change.
-  let (transitions, data) = read_untils(data, head.n_time, is64);
+  let (transitions, data) = read_transitions(data, head.n_time, is64);
   // Js.log2("transitions", transitions);
   //     tzh_timecnt * one-byte unsigned integer values; each one but the last
   //         tells which of the different types of local time types described in
@@ -291,7 +304,7 @@ let unmarshal_binary = (name: string, data: array(char)) => {
   // Js.log2("zone_infos", zones);
 
   let (abbrev_arr, data) = poll(head.n_char, data);
-  let abbrev = split_string('\000', to_string(abbrev_arr));
+  let abbrev = Strings.split('\000', Arrays.to_string(abbrev_arr));
   // Js.log2("abbrev", abbrev);
 
   // Mapping to correct index
@@ -316,14 +329,16 @@ let unmarshal_binary = (name: string, data: array(char)) => {
   //      pairs of values are sorted in ascending order by time.  Each
   //      transition is for one leap second, either positive or negative;
   //      transitions always separated by at least 28 days minus 1 second.
-  let (leap_seconds, data) = read_leap_seconds(data, head.n_leap, is64);
+  // let (leap_seconds, data) = read_leap_seconds(data, head.n_leap, is64);
+  let (_, data) = read_leap_seconds(data, head.n_leap, is64);
   // Js.log2("leap_seconds", leap_seconds);
 
   //   tzh_ttisstdcnt * standard/wall indicators, each stored as a one-byte
   //      boolean; they tell whether the transition times associated with
   //      local time types were specified as standard time or local (wall
   //      clock) time.
-  let (isstds, data) = read_bools(data, head.n_std_wall);
+  // let (isstds, data) = read_bools(data, head.n_std_wall);
+  let (_, data) = read_bools(data, head.n_std_wall);
   // Js.log2("isstds:", isstds);
 
   //   tzh_ttisutcnt * UT/local indicators, each stored as a one-byte
@@ -331,7 +346,8 @@ let unmarshal_binary = (name: string, data: array(char)) => {
   //      local time types were specified as UT or local time.  If a UT/local
   //      indicator is set, the corresponding standard/wall indicator must
   //      also be set.
-  let (isuts, _) = read_bools(data, head.n_utc_local);
+  // let (isuts, _) = read_bools(data, head.n_utc_local);
+  let (_, _) = read_bools(data, head.n_utc_local);
   // Js.log2("isuts:", isuts);
   // Js.log2("rem:", Array.length(data));
   Tajm_Iana_Tz.{
@@ -339,9 +355,9 @@ let unmarshal_binary = (name: string, data: array(char)) => {
     transitions,
     zone_idxs,
     zones,
-    leap_seconds,
-    isstds,
-    isuts,
     abbrev,
+    // leap_seconds,
+    // isstds,
+    // isuts,
   };
 };
