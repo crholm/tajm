@@ -5,7 +5,7 @@
 ## API Reference
 The api is inspierd by Golang time lib
 
-Tajm does not differentiate between a date and a time (wall clock). Instead there is only one type, time_, which can be used for both dependent on your need
+Tajm does not differentiate between a date and a time (wall clock). Instead there is only one type, `time_`, which can be used for both dependent on your need
 
 ### Tajm
 
@@ -15,7 +15,7 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 
 #### `let atLocal = (t: time_) => time_`
 #### `let atUTC = (t: time_) => time_`
-#### `let atFixed = (t: time_) => time_`
+#### `let atFixed = (name: string, sec: int) => time_`
 #### `let zone = (t: time_) => location_`
 #### `let location: (name: string) => option(location_)`
 
