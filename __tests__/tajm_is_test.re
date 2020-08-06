@@ -57,10 +57,10 @@ describe("Tajm Is", () => {
     |> toBe(false)
   });
   test("same Second", () => {
-    t |> Tajm.set(~ms=0) |> Tajm.Is.sameSecound(t) |> expect |> toBe(true)
+    t |> Tajm.set(~ms=0) |> Tajm.Is.sameSecond(t) |> expect |> toBe(true)
   });
   test("same Second not", () => {
-    t |> Tajm.set(~sec=0) |> Tajm.Is.sameSecound(t) |> expect |> toBe(false)
+    t |> Tajm.set(~sec=0) |> Tajm.Is.sameSecond(t) |> expect |> toBe(false)
   });
 
   test("same Minute", () => {

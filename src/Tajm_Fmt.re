@@ -295,21 +295,33 @@ let printer = (t: time_, tokens: list(token)) => {
            | Month => t |> month |> stringShortOfMonth
            | NumMonth => t |> month |> intOfMonth |> string_of_int
            | ZeroMonth =>
-             t |> month |> intOfMonth |> string_of_int |> Strings.leftPad(2, '0')
+             t
+             |> month
+             |> intOfMonth
+             |> string_of_int
+             |> Strings.leftPad(2, '0')
            | RightMonth =>
-             t |> month |> intOfMonth |> string_of_int |> Strings.leftPad(2, ' ')
+             t
+             |> month
+             |> intOfMonth
+             |> string_of_int
+             |> Strings.leftPad(2, ' ')
            | LongWeekDay => t |> weekday |> stringOfWeekday
            | WeekDay => t |> weekday |> stringOfWeekdayShort
            | Day => t |> day |> string_of_int
            | RightDay => t |> day |> string_of_int |> Strings.leftPad(2, ' ')
            | ZeroDay => t |> day |> string_of_int |> Strings.leftPad(2, '0')
            | YearDay => t |> yearDay |> string_of_int
-           | RightYearDay => t |> yearDay |> string_of_int |> Strings.leftPad(3, ' ')
-           | ZeroYearDay => t |> yearDay |> string_of_int |> Strings.leftPad(3, '0')
+           | RightYearDay =>
+             t |> yearDay |> string_of_int |> Strings.leftPad(3, ' ')
+           | ZeroYearDay =>
+             t |> yearDay |> string_of_int |> Strings.leftPad(3, '0')
            | Hour => t |> hour |> string_of_int |> Strings.leftPad(2, '0')
            | NumWeekDay => (t |> weekday |> intOfWeekday) + 1 |> string_of_int
-           | ZeroYearWeek => t |> week |> string_of_int |> Strings.leftPad(2, '0')
-           | RightYearWeek => t |> week |> string_of_int |> Strings.leftPad(2, ' ')
+           | ZeroYearWeek =>
+             t |> week |> string_of_int |> Strings.leftPad(2, '0')
+           | RightYearWeek =>
+             t |> week |> string_of_int |> Strings.leftPad(2, ' ')
            | YearWeek => t |> week |> string_of_int
            | Hour12 =>
              let h = t |> hour;
@@ -325,11 +337,15 @@ let printer = (t: time_, tokens: list(token)) => {
              |> string_of_int
              |> Strings.leftPad(2, ' ');
            | Minute => t |> minute |> string_of_int
-           | ZeroMinute => t |> minute |> string_of_int |> Strings.leftPad(2, '0')
-           | RightMinute => t |> minute |> string_of_int |> Strings.leftPad(2, ' ')
+           | ZeroMinute =>
+             t |> minute |> string_of_int |> Strings.leftPad(2, '0')
+           | RightMinute =>
+             t |> minute |> string_of_int |> Strings.leftPad(2, ' ')
            | Second => t |> second |> string_of_int
-           | ZeroSecond => t |> second |> string_of_int |> Strings.leftPad(2, '0')
-           | RightSecond => t |> second |> string_of_int |> Strings.leftPad(2, ' ')
+           | ZeroSecond =>
+             t |> second |> string_of_int |> Strings.leftPad(2, '0')
+           | RightSecond =>
+             t |> second |> string_of_int |> Strings.leftPad(2, ' ')
            | LongYear => t |> year |> string_of_int
            | Year =>
              let y = t |> year |> string_of_int |> Strings.leftPad(4, '0');
@@ -337,7 +353,8 @@ let printer = (t: time_, tokens: list(token)) => {
            | PM(upper) =>
              t |> hour < 12 ? upper ? "AM" : "am" : upper ? "PM" : "pm"
            | FracSecond0(i) =>
-             "." ++ (t |> millisecond |> string_of_int |> Strings.leftPad(i, '0'))
+             "."
+             ++ (t |> millisecond |> string_of_int |> Strings.leftPad(i, '0'))
            | FracSecond9(i) =>
              let str =
                t
@@ -355,7 +372,9 @@ let printer = (t: time_, tokens: list(token)) => {
              off == 0
                ? "Z"
                : (off < 0 ? "-" : "+")
-                 ++ (abs(off) / 60 |> string_of_int |> Strings.leftPad(2, '0'));
+                 ++ (
+                   abs(off) / 60 |> string_of_int |> Strings.leftPad(2, '0')
+                 );
            | ISO8601TZ =>
              let off = tzOffset();
              off == 0
@@ -368,9 +387,16 @@ let printer = (t: time_, tokens: list(token)) => {
              off == 0
                ? "Z"
                : (off < 0 ? "-" : "+")
-                 ++ (abs(off) / 60 |> string_of_int |> Strings.leftPad(2, '0'))
+                 ++ (
+                   abs(off) / 60 |> string_of_int |> Strings.leftPad(2, '0')
+                 )
                  ++ ":"
-                 ++ (abs(off) mod 60 |> string_of_int |> Strings.leftPad(2, '0'));
+                 ++ (
+                   abs(off)
+                   mod 60
+                   |> string_of_int
+                   |> Strings.leftPad(2, '0')
+                 );
            | NumShortTZ =>
              let off = tzOffset();
              (off < 0 ? "-" : "+")
@@ -396,8 +422,8 @@ let printer = (t: time_, tokens: list(token)) => {
 
 let parse = (s: string, tokens: list(token)): option(time_) => {
   let par = (): option(time_) => {
-    let tz = ref(Fixed("UTC", 0))
-    let pmAdjustment = ref(false)
+    let tz = ref(Fixed("UTC", 0));
+    let pmAdjustment = ref(false);
     let (_, t) =
       tokens
       |> List.fold_left(
@@ -552,76 +578,105 @@ let parse = (s: string, tokens: list(token)): option(time_) => {
                if (hd |> String.lowercase_ascii == "pm") {
                  pmAdjustment := true;
                };
-                 (tl, t);
+               (tl, t);
 
              | TZ => (str, t) // = "MST";
-             | ISO8601TZ => // = "Z0700";  prints Z for UTC
+             | ISO8601TZ =>
+               // = "Z0700";  prints Z for UTC
                let (hd, tl) = poll(1, str);
-               if(hd == "Z"){
-                 (tl, t |> at(Tajm_Const.z)) 
-               }else {
+               if (hd == "Z") {
+                 (tl, t |> at(Tajm_Const.z));
+               } else {
                  let neg = hd == "-";
                  let (h, tl) = poll(2, tl);
                  let (m, tl) = poll(2, tl);
-                 let sec = (neg ? -1 : 1) *int_of_string(h)*60*60 + int_of_string(m)*60;
+                 let sec =
+                   (neg ? (-1) : 1)
+                   * int_of_string(h)
+                   * 60
+                   * 60
+                   + int_of_string(m)
+                   * 60;
                  tz := Fixed("", sec);
 
-                 (tl, t)
-               }
-               
-             | ISO8601ShortTZ => // = "Z07";
-                let (hd, tl) = poll(1, str);
-                if(hd == "Z"){
-                  (tl, t |> at(Tajm_Const.z)) 
-                }else {
-                  let neg = hd == "-";
-                  let (h, tl) = poll(2, tl);
-                  let sec = (neg ? -1 : 1) *int_of_string(h)*60*60;
-                    tz := Fixed("", sec);
+                 (tl, t);
+               };
 
-                  (tl, t )
-                }
-             | ISO8601ColonTZ => // = "Z07:00";  prints Z for UTC
+             | ISO8601ShortTZ =>
+               // = "Z07";
                let (hd, tl) = poll(1, str);
-               if(hd == "Z"){
-                 (tl, t |> at(Tajm_Const.z)) 
-               }else {
+               if (hd == "Z") {
+                 (tl, t |> at(Tajm_Const.z));
+               } else {
+                 let neg = hd == "-";
+                 let (h, tl) = poll(2, tl);
+                 let sec = (neg ? (-1) : 1) * int_of_string(h) * 60 * 60;
+                 tz := Fixed("", sec);
+
+                 (tl, t);
+               };
+             | ISO8601ColonTZ =>
+               // = "Z07:00";  prints Z for UTC
+               let (hd, tl) = poll(1, str);
+               if (hd == "Z") {
+                 (tl, t |> at(Tajm_Const.z));
+               } else {
                  let neg = hd == "-";
                  let (h, tl) = poll(2, tl);
                  let (_, tl) = poll(1, tl);
                  let (m, tl) = poll(2, tl);
-                 let sec = (neg ? -1 : 1) *int_of_string(h)*60*60 + int_of_string(m)*60;
+                 let sec =
+                   (neg ? (-1) : 1)
+                   * int_of_string(h)
+                   * 60
+                   * 60
+                   + int_of_string(m)
+                   * 60;
                  tz := Fixed("", sec);
-                 (tl, t )
-               }
-             | NumTZ => // = "-0700";  always numeric
-                let (hd, tl) = poll(1, str);
-                let neg = hd == "-";
-                let (h, tl) = poll(2, tl);
-                let (m, tl) = poll(2, tl);
-                let sec = (neg ? -1 : 1) *int_of_string(h)*60*60 + int_of_string(m)*60;
-                tz := Fixed("", sec);
-                (tl, t)
-          
+                 (tl, t);
+               };
+             | NumTZ =>
+               // = "-0700";  always numeric
+               let (hd, tl) = poll(1, str);
+               let neg = hd == "-";
+               let (h, tl) = poll(2, tl);
+               let (m, tl) = poll(2, tl);
+               let sec =
+                 (neg ? (-1) : 1)
+                 * int_of_string(h)
+                 * 60
+                 * 60
+                 + int_of_string(m)
+                 * 60;
+               tz := Fixed("", sec);
+               (tl, t);
 
-             | NumShortTZ => // = "-07"; always numeric
-                let (hd, tl) = poll(1, str);
-                let neg = hd == "-";
-                let (h, tl) = poll(2, tl);
-                let sec = (neg ? -1 : 1) *int_of_string(h)*60*60;
-                tz := Fixed("", sec);
-                (tl, t)
-          
-             | NumColonTZ => // = "-07:00";
-             let (hd, tl) = poll(1, str);
-                let neg = hd == "-";
-                let (h, tl) = poll(2, tl);
-                let (_, tl) = poll(1, tl)
-                let (m, tl) = poll(2, tl);
-                let sec = (neg ? -1 : 1) *int_of_string(h)*60*60 + int_of_string(m)*60;
-                tz := Fixed("", sec);
-                (tl, t)
-          
+             | NumShortTZ =>
+               // = "-07"; always numeric
+               let (hd, tl) = poll(1, str);
+               let neg = hd == "-";
+               let (h, tl) = poll(2, tl);
+               let sec = (neg ? (-1) : 1) * int_of_string(h) * 60 * 60;
+               tz := Fixed("", sec);
+               (tl, t);
+
+             | NumColonTZ =>
+               // = "-07:00";
+               let (hd, tl) = poll(1, str);
+               let neg = hd == "-";
+               let (h, tl) = poll(2, tl);
+               let (_, tl) = poll(1, tl);
+               let (m, tl) = poll(2, tl);
+               let sec =
+                 (neg ? (-1) : 1)
+                 * int_of_string(h)
+                 * 60
+                 * 60
+                 + int_of_string(m)
+                 * 60;
+               tz := Fixed("", sec);
+               (tl, t);
+
              | FracSecond0(_) => (str, t) // = ".0"; ".00", ".000", ... , trailing zeros included
              | FracSecond9(_) => (str, t) // = ".9"; ".99", ".999" ... , trailing zeros omited
 
@@ -640,13 +695,17 @@ let parse = (s: string, tokens: list(token)): option(time_) => {
            (s, zero),
          );
 
-    let t = !pmAdjustment^ ? t : {
-      let adjust = t |> hour;
-      let hour = adjust < 12 ? adjust + 12 : adjust;
-      t |> set(~hour);
-    };
-    
-    let adjust = {t: t.t, loc: tz^} |> Tajm_Kernel.tzAdjustment |> Int64.of_int;
+    let t =
+      ! pmAdjustment^
+        ? t
+        : {
+          let adjust = t |> hour;
+          let hour = adjust < 12 ? adjust + 12 : adjust;
+          t |> set(~hour);
+        };
+
+    let adjust =
+      {t: t.t, loc: tz^} |> Tajm_Kernel.tzAdjustment |> Int64.of_int;
     Some({t: Int64.add(t.t, adjust), loc: tz^});
   };
 

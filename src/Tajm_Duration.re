@@ -67,10 +67,14 @@ let parse = (_d: string): duration_ => {
           String.sub(_d, si + 1, msi - si - 1)
           |> (
             s => {
-              let l = s |> Lists.of_string |> Lists.dropRightWhile(c => c == '0');
+              let l =
+                s |> Lists.of_string |> Lists.dropRightWhile(c => c == '0');
 
               let divisor =
-                l |> Lists.takeWhile(c => c == '0') |> List.length |> float_of_int;
+                l
+                |> Lists.takeWhile(c => c == '0')
+                |> List.length
+                |> float_of_int;
 
               l
               |> Lists.to_string

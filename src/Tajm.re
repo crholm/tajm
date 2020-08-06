@@ -3,7 +3,6 @@ include Tajm_Const;
 include Tajm_Func;
 
 module Duration = Tajm_Duration;
-module Days = Tajm_Days;
 module Is = Tajm_Is;
 module Conv = Tajm_Conv;
 

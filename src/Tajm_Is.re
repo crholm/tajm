@@ -22,7 +22,7 @@ let hour = (h: int, t: time_) => {
 let minute = (m: int, t: time_) => {
   t |> Func.minute == m;
 };
-let secound = (s: int, t: time_) => {
+let secoud = (s: int, t: time_) => {
   t |> Func.second == s;
 };
 let millisecond = (ms: int, t: time_) => {
@@ -52,14 +52,11 @@ let leapYear = (t: time_) => {
 let rec same = (u: timeunit_, t1: time_, t2: time_): bool => {
   switch (u) {
   | Millisecond => equal(t1, t2)
-  | Second =>
-    Func.second(t1) == Func.second(t2) && same(Minute, t1, t2)
-  | Minute =>
-    Func.minute(t1) == Func.minute(t2) && same(Hour, t1, t2)
+  | Second => Func.second(t1) == Func.second(t2) && same(Minute, t1, t2)
+  | Minute => Func.minute(t1) == Func.minute(t2) && same(Hour, t1, t2)
   | Hour => Func.hour(t1) == Func.hour(t2) && same(Day, t1, t2)
   | Day => Func.day(t1) == Func.day(t2) && same(Month, t1, t2)
-  | Month =>
-    Func.month(t1) == Func.month(t2) && same(Year, t1, t2)
+  | Month => Func.month(t1) == Func.month(t2) && same(Year, t1, t2)
   | Year => Func.year(t1) == Func.year(t2)
   };
 };
@@ -69,5 +66,5 @@ let sameMonth = same(Month);
 let sameDay = same(Day);
 let sameHour = same(Hour);
 let sameMinute = same(Minute);
-let sameSecound = same(Second);
+let sameSecond = same(Second);
 let sameMillisecond = same(Millisecond);

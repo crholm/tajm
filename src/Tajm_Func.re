@@ -58,7 +58,8 @@ let make =
   let d =
     Tajm_Kernel.withYMDHMS(
       ~year=float_of_int(year |> Options.valueOr(0)),
-      ~month=float_of_int(intOfMonth(month |> Options.valueOr(January)) - 1),
+      ~month=
+        float_of_int(intOfMonth(month |> Options.valueOr(January)) - 1),
       ~date=float_of_int(day |> Options.valueOr(1)),
       ~hours=float_of_int(hour |> Options.valueOr(0)),
       ~minutes=float_of_int(min |> Options.valueOr(0)),
@@ -259,3 +260,6 @@ let rec endOf = (u: timeunit_, t: time_) => {
   | Millisecond => t
   };
 };
+
+let dayOfYear = Tajm_Conv.daysInYear;
+let dayOfMonth = Tajm_Conv.daysInMonth;
