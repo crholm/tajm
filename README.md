@@ -18,13 +18,48 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 #### `let atFixed = (t: time_) => time_`
 #### `let zone = (t: time_) => location_`
 #### `let location: (name: string) => option(location_)`
-#### `let zero = () => time_`
 
+#### `let zero = () => time_`
+#### `let now = () => time_`
 #### `let unix: (t: time_) => float`
 #### `let ofUnix: (f: float) => time_`
-#### `let make: (~y,~m, ~d, ~hour, ~min, ~sec, ~ms, loc) => time_`
+#### `let make: (~y, ~m, ~d, ~hour, ~min, ~sec, ~ms, loc) => time_`
 
 
+#### `let add: (dur: duration_, t: time_) => time_`
+#### `let sub: (t1: time_, t2: time_) => duration_`
+
+#### `let since: (t: time_) => duration_`
+#### `let until: (t: time_) => duration_`
+#### `let truncate: (_m: duration_, t: time_) => time_`
+
+#### `let before: (t2: time_, t1: time_) => bool`
+#### `let after: (t2: time_, t1: time_) => bool`
+
+#### `let future: (t: time_) => bool`
+#### `let past: (t: time_) => bool`
+
+#### `let weekday: (t: time_) => weekday_`
+#### `let year: (t: time_) => int`
+#### `let month: (t: time_) => month_`
+#### `let day: (t: time_) => int`
+#### `let hour: (t: time_) => int`
+#### `let minute: (t: time_) => int`
+#### `let second: (t: time_) => int`
+#### `let millisecond: (t: time_) => int`
+
+#### `let yearDay: (t: time_) => int`
+#### `let week: (t: time_) => int`
+#### `let clock: (t: time_) => (int, int, int)`
+#### `let date: (t: time_) => (int, month_, int)`
+
+#### `let set: (~y, ~m, ~d, ~hour, ~min, ~sec, ~ms, _time) => time_`
+#### `let setDate: (y: int, m: month_, d: int, t: time_) => time_`
+#### `let setClock: (hour: int, min: int, sec: int, t: time_) => time_`
+
+#### `let addDate: (~y, ~m, ~d, t: time_) => time_`
+#### `let startOf = (u: timeunit_, t: time_) => time_`
+#### `let endOf = (u: timeunit_, t: time_) => time_`
 
 #### `let format: (format: string, t: time_) => string`
 #### `let parse: (format: string, t: string) => time_`
