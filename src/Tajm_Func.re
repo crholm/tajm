@@ -39,10 +39,6 @@ let ofUnix = (f: float): time_ => {
   {t: f |> Int64.of_float, loc: z};
 };
 
-// let js = (t: time_) => {
-//   t |> unix |> Tajm_Kernel.fromFloat;
-// };
-
 let make =
     (
       ~y as year: option(int)=?,
@@ -72,6 +68,7 @@ let make =
   {...d, t: Int64.add(d.t, msf)};
 };
 
+/* Cast any event type to the general synthetic type. This is safe, since synthetic is more general */
 let now = (): time_ => {
   let ms = Tajm_Kernel.now();
   {t: ms |> Int64.of_float, loc: z};
@@ -94,18 +91,18 @@ let until = (t: time_): duration_ => {
 };
 
 let truncate = (_m: duration_, t: time_): time_ => {
-  {...t, t: t.t |> Int64.sub(t.t |> Int64.rem(_m |> Int64.of_float))};
+  {...t, t: Int64.sub(t.t, Int64.rem(t.t, _m |> Int64.of_float))};
 };
 
 // y2000 |> before(y3000) // true
 // y3000 |> before(y2000) // flase
-let before = (t2: time_, t1: time_): bool => {
+let before = (t1: time_, t2: time_): bool => {
   t1.t < t2.t;
 };
 
 // y2000 |> after(y3000) // false
 // y3000 |> after(y2000) // true
-let after = (t2: time_, t1: time_): bool => {
+let after = (t1: time_, t2: time_): bool => {
   t1.t > t2.t;
 };
 

@@ -7,37 +7,179 @@ The api is inspierd by Golang time lib
 
 Tajm does not differentiate between a date and a time (wall clock). Instead there is only one type, `time_`, which can be used for both dependent on your need
 
-### Tajm
-
-
-#### `let compare: (t1: time_, t2: time_) => int`
-#### `let at = (loc: location_, t: time_) => time_`
-
-#### `let atLocal = (t: time_) => time_`
-#### `let atUTC = (t: time_) => time_`
-#### `let atFixed = (name: string, sec: int) => time_`
-#### `let zone = (t: time_) => location_`
-#### `let location: (name: string) => option(location_)`
+<details>
+<summary><strong>Tajm</strong></summary>
 
 #### `let zero = () => time_`
-#### `let now = () => time_`
-#### `let unix: (t: time_) => float`
-#### `let ofUnix: (f: float) => time_`
-#### `let make: (~y, ~m, ~d, ~hour, ~min, ~sec, ~ms, loc) => time_`
+```reason 
+Tajm.zero() |> Tajm.string |> Js.log
+// 1970-01-01T00:00:00.000Z
+```
 
+
+#### `let now = () => time_`
+```reason
+Tajm.now() |> Tajm.string |> Js.log
+// 2020-08-07T07:38:57.613Z
+```
+#### `let ofUnix: (f: float) => time_`
+```reason 
+Tajm.ofUnix(1585443600000.)  |> Tajm.string |> Js.log
+// 2020-03-29T01:00:00.000Z```
+
+
+#### `let make: (~y, ~m, ~d, ~hour, ~min, ~sec, ~ms, loc) => time_`
+```reason 
+Tajm.make(
+  ~y=2020,
+  ~m=February,
+  ~d=29,
+  ~hour=15,
+  ~min=32,
+  ~sec=42,
+  ~ms=123,
+  Tajm.z,
+)
+|> Tajm.string
+|> Js.log;
+// 2020-02-29T15:32:42.123Z
+
+```
+
+#### `let compare: (t1: time_, t2: time_) => int`
+```reason 
+Tajm.zero |> Tajm.compare(Tajm.now()) |> Js.log
+// 1
+```
+
+#### `let unix: (t: time_) => float`
+```reason 
+Tajm.now() |> Tajm.unix |> Js.log
+1596788909886
+```
+#### `let toJs: (t: time_) => Js.Date.t`
+```reason 
+Tajm.now() |> Tajm.toJs |> Js.log
+2020-08-07T08:29:14.241Z
+```
 
 #### `let add: (dur: duration_, t: time_) => time_`
+```reason
+Tajm.now()
+|> tee2(Tajm.string, Js.log)
+|> Tajm.add(Tajm.Duration.hour)
+|> Tajm.string
+|> Js.log
+//2020-08-07T08:35:18.066Z
+//2020-08-07T09:35:18.066Z
+```
+
 #### `let sub: (t1: time_, t2: time_) => duration_`
+```reason 
+let t1 = Tajm.now();
+let t2 =
+  t1 |> Tajm.add(Tajm.Duration.hour) |> Tajm.add(15. *. Tajm.Duration.minute);
+Tajm.sub(t1, t2) |> Tajm.Duration.string |> Js.log
+// -1h15m0s
+```
 
 #### `let since: (t: time_) => duration_`
+```reason 
+Tajm.now()
+|> Tajm.add((-35.) *. Tajm.Duration.secound)
+|> Tajm.since
+|> Tajm.Duration.string
+|> Js.log;
+// 0h0m35s
+```
 #### `let until: (t: time_) => duration_`
+```reason 
+Tajm.now()
+|> Tajm.add(2. *. Tajm.Duration.minute)
+|> Tajm.until
+|> Tajm.Duration.string
+|> Js.log;
+// 0h2m0s
+```
+
 #### `let truncate: (_m: duration_, t: time_) => time_`
+```reason 
+Tajm.now() |> Tajm.truncate(Tajm.Duration.minute) |> Tajm.string |> Js.log
+// 2020-08-07T08:52:00.000Z
+```
+
 
 #### `let before: (t2: time_, t1: time_) => bool`
+```reason 
+Tajm.now()->Tajm.before(Tajm.zero) |> Js.log;
+// false
+```
 #### `let after: (t2: time_, t1: time_) => bool`
+```reason 
+Tajm.now()->Tajm.after(Tajm.zero) |> Js.log;
+//true
+```
 
 #### `let future: (t: time_) => bool`
+```reason
+Tajm.zero |> Tajm.future |> Js.log;
+// false
+```
+
 #### `let past: (t: time_) => bool`
+```reason
+Tajm.zero |> Tajm.past |> Js.log;
+// true
+```
+
+
+#### `let atUTC = (t: time_) => time_`
+```reason 
+Tajm.now()
+|> Tajm.atUTC
+|> Tajm.format("2006-01-02 15:04:05 Z07:00")
+|> Js.log
+// 2020-08-07 09:05:38 Z
+```
+#### `let atLocal = (t: time_) => time_`
+```reason 
+Tajm.now()
+|> Tajm.atLocal
+|> Tajm.format("2006-01-02 15:04:05 Z07:00")
+|> Js.log
+2020-08-07 11:05:38 +02:00
+```
+#### `let atFixed = (name: string, sec: int) => time_`
+```reason
+Tajm.now()
+|> Tajm.atFixed("CEST", 2 * 60 * 60)
+|> Tajm.format("2006-01-02 15:04:05 MST")
+|> Js.log
+//2020-08-07 11:07:46 CEST
+```
+
+#### `let at = (loc: location_, t: time_) => time_`
+```reason
+Tajm.now()
+|> Tajm.at(Tajm.local)
+|> Tajm.format("2006-01-02 15:04:05 MST")
+|> Js.log;
+2020-08-07 11:10:21 Central European Summer Time
+```
+
+
+#### `let zone = (t: time_) => location_`
+```reason
+let zone = Tajm.now() |> Tajm.at(Tajm.local) |> Tajm.zone;
+Tajm.zero
+|> Tajm.at(zone)
+|> Tajm.format("2006-01-02 15:04:05 Z07:00")
+|> Js.log;
+1970-01-01 01:00:00 +01:00
+```
+
+#### `let location: (name: string) => option(location_)`
+
 
 #### `let weekday: (t: time_) => weekday_`
 #### `let year: (t: time_) => int`
@@ -64,9 +206,12 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 #### `let format: (format: string, t: time_) => string`
 #### `let parse: (format: string, t: string) => time_`
 #### `let string: (t: time_) => string`
-#### `let toJs: (t: time_) => Js.Date.t`
 
-### Tajm.Duration
+</details>
+
+
+<details>
+<summary><strong>Tajm.Duration</strong></summary>
 
 #### `let millisecond: duration_`
 #### `let secound: duration_`
@@ -77,7 +222,11 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 #### `let string: (d: duration_) => string`
 #### `let parse: (d: string) => duration_`
 
-### Tajm.Is
+</details>
+
+<details>
+<summary><strong>Tajm.Is</strong></summary>
+
 #### `let  equal: (t1: time_, t2: time_) => bool`
 #### `let  zero: (t: time_) => bool`
 
@@ -109,8 +258,11 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 #### `let  sameSecond: (t: time_) => bool`
 #### `let  sameMillisecond: (t: time_) => bool`
 
+</details>
 
-### Tajm.Conv
+<details>
+<summary><strong>Tajm.Conv</strong></summary>
+
 #### `let stringOfWeekday: (weekday: weekday_) => string`
 #### `let stringOfWeekdayShort: (weekday: weekday_) => string`
 #### `let intOfWeekday: (weekday: weekday_) => int`
@@ -123,8 +275,13 @@ Tajm does not differentiate between a date and a time (wall clock). Instead ther
 #### `let daysInYear: (year: int) => int`
 #### `let daysInMonth: (year: int, month: month_) => int`
 
+</details>
 
-### Types
+
+
+<details>
+<summary><strong>Types</strong></summary>
+
 ```reason
 type time_ = {
   t: int64,
@@ -172,3 +329,5 @@ type location_ =
   | Local                  // Uses the local location defined by the environment
   | IANA(Tajm_Iana_Tz.tz); // A IANA location, eg Europe/London
 ```
+
+</details>

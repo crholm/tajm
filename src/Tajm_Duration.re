@@ -11,6 +11,8 @@ let truncate = (_m: duration_, _d: duration_): duration_ => {
 };
 
 let string = (a: duration_) => {
+  let neg = a < 0.;
+  let a = abs_float(a);
   let s = mod_float(a, minute) /. secound;
   let m = (mod_float(a, hour) -. s) /. minute;
   let h = a /. hour;
@@ -26,7 +28,8 @@ let string = (a: duration_) => {
           mms |> String.length < 4 ? mms : String.sub(mms, 0, 3);
         };
 
-  (h > 0. ? string_of_int(int_of_float(h)) ++ "h" : "")
+  (neg ? "-" : "")
+  ++ (h > 0. ? string_of_int(int_of_float(h)) ++ "h" : "")
   ++ (h > 0. || m > 0. ? string_of_int(int_of_float(m)) ++ "m" : "")
   ++ ss
   ++ ms
@@ -35,6 +38,8 @@ let string = (a: duration_) => {
 
 // Todo: replace rais with option
 let parse = (_d: string): duration_ => {
+  let neg = _d.[0] == '-';
+  let _d = neg ? String.sub(_d, 1, String.length(_d) - 1) : _d;
   let hi =
     try(String.index(_d, 'h')) {
     | Not_found => (-1)
@@ -114,5 +119,13 @@ let parse = (_d: string): duration_ => {
       | Failure(_) => raise(Invalid_argument("h_not_a_number"))
       }
     };
-  h *. hour +. m *. minute +. s *. secound +. ms *. millisecond;
+  (neg ? (-1.) : 1.)
+  *. h
+  *. hour
+  +. m
+  *. minute
+  +. s
+  *. secound
+  +. ms
+  *. millisecond;
 };

@@ -23,5 +23,5 @@ rm -r tmp
 
 bsb
 rm /home/raz/workspace/re-time/src/iana/lib/Tajm_Iana_Lib*.re
-node lib/js/tools/Generate_Iana.js
+node lib/js/scripts/Generate_Iana.js
 bsb
