@@ -1,6 +1,24 @@
 # Tajm [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/crholm/tajm/blob/master/LICENSE)
 
-> A quite large lib for handling time in Reason
+> A ReasonML library to handle most needs when time and dates are needed.
+
+## Install 
+```bash
+npm install tajm --save
+```
+or 
+```bash
+yarn add tajm
+```
+
+Add `tajm` to `bs-dependencies` in your `bsconfig.json`:
+```json 
+{
+  "bs-dependencies": [
+    "tajm"
+  ]
+}
+```
 
 ## API Reference
 The api is inspierd by Golang time lib
@@ -319,7 +337,7 @@ Tajm.fmtKitchen         = "3:04PM";
 | Month             // = "Jan";
 | NumMonth          // = "1";
 | ZeroMonth         // = "01"; Padd left with 0
-| RightMonth        // = "_1";  Right aligns
+| RightMonth        // = "_1"; Right aligns
 | LongWeekDay       // = "Monday";
 | WeekDay           // = "Mon";
 | NumWeekDay        // = "7";
@@ -511,3 +529,11 @@ npm install
 npm run build
 npm run test
 ```
+
+## TODO
+* More tests 
+* Finish Tajm.parse 
+* Expose IANA properly
+* Convert IANA DB to Map
+* Rewrite IANA unmarshaler to pass once
+* Finish Documentation

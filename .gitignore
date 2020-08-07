@@ -9,3 +9,4 @@ lib
 !src/iana/lib
 coverage
 data
+.idea

@@ -1,6 +1,26 @@
 {
-  "name": "@crholm/tajm",
+  "name": "tajm",
   "version": "0.1.0",
+  "author": "Rasmus Holm",
+  "license": "MIT",
+  "description": "A ReasonML library to handle most needs when time and dates are needed.",
+  "category" : "library",
+  "keywords": [
+    "reason",
+    "reasonml",
+    "bucklescript",
+    "date",
+    "time",
+    "datetime",
+    "iana",
+    "timezone"
+  ],
+  "homepage": "https://github.com/crholm/tajm#README.md",
+  "bugs": "https://github.com/crholm/tajm/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crholm/tajm.git"
+  },
   "scripts": {
     "clean": "bsb -clean-world",
     "build:iana": "./iana.sh",
@@ -8,14 +28,7 @@
     "build": "npm run build:iana && npm run build:bsb",
     "test": "bsb && jest"
   },
-  "keywords": [
-    "BuckleScript",
-    "Time",
-    "Date",
-    "Reason"
-  ],
-  "author": "Rasmus Holm",
-  "license": "MIT",
+
   "devDependencies": {
     "@glennsl/bs-jest": "^0.5.1",
     "bs-platform": "^8.2.0",
