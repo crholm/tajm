@@ -1,4 +1,5 @@
 module Arrays = Tajm_Functions_Array;
+module Lists = Tajm_Functions_List;
 module Strings = Tajm_Functions_String;
 module Binary = Tajm_Functions_Binary;
 module Base64 = Tajm_Functions_Base64;
@@ -150,49 +151,144 @@ let read_headers = (data: array(char)): (header, array(char)) => {
   let n_char = Binary.int_of_bytes(`big, i);
   ({version, n_utc_local, n_std_wall, n_leap, n_time, n_zone, n_char}, data);
 };
+//let unmarshal_old = (data: string): Tajm_Iana_Tz.tz => {
+//  // Js.log(" 1");
+//  let parts = Strings.split('|', data);
+//  // Js.log(" 2");
+//  let name = parts[0];
+//  // Js.log(" 3");
+//  let abbrev = parts[1] |> Strings.split(' ');
+//  // Js.log(" 4");
+//  let zones =
+//    parts[2]
+//    |> Strings.split(' ')
+//    |> Array.map(s => {
+//         let pp = Strings.split(':', s);
+//         Tajm_Iana_Tz.{
+//           offset: pp[0] |> int_of_string,
+//           abbrev_idx: pp[1] |> int_of_string,
+//         };
+//       });
+//
+//  // Js.log(" 5");
+//  let zone_idxs =
+//    parts[3]
+//    |> Tajm_Functions_Array.of_string
+//    |> Array.map(c => {int_of_char(c) - 48});
+//  // Js.log(" 6");
+//  let transitions =
+//    parts[4]
+//    |> Strings.split(' ')
+//    |> Array.map((p: string) => {
+//         let neg = p.[0] == '-';
+//         let p = neg ? String.sub(p, 1, String.length(p) - 1) : p;
+//         let bytes = Base64.decode(`std, p);
+//         let blen = Array.length(bytes);
+//         let bytes = Array.append(Array.init(8 - blen, _ => '\000'), bytes);
+//         let num = Binary.float_of_bytes(`big, bytes) *. 1000.;
+//
+//         neg ? -. num : num;
+//       });
+//
+//  // Js.log(" 7");
+//  Tajm_Iana_Tz.{name, abbrev, zones, zone_idxs, transitions};
+//};
 
 let unmarshal = (data: string): Tajm_Iana_Tz.tz => {
-  // Js.log(" 1");
-  let parts = Strings.split('|', data);
-  // Js.log(" 2");
-  let name = parts[0];
-  // Js.log(" 3");
-  let abbrev =
-    parts[1] |> Strings.split(' ');
-  // Js.log(" 4");
-  let zones =
-    parts[2]
-    |> Strings.split(' ')
-    |> Array.map(s => {
-         let pp = Strings.split(':', s);
-         Tajm_Iana_Tz.{
-           offset: pp[0] |> int_of_string,
-           abbrev_idx: pp[1] |> int_of_string,
-         };
-       })
-    ;
-  // Js.log(" 5");
-  let zone_idxs =
-    parts[3]
-    |> Tajm_Functions_Array.of_string
-    |> Array.map(c => {int_of_char(c) - 48});
-  // Js.log(" 6");
-  let transitions =
-    parts[4]
-    |> Strings.split(' ')
-    |> Array.map((p: string) => {
-         let neg = p.[0] == '-';
-         let p = neg ? String.sub(p, 1, String.length(p) - 1) : p;
-         let bytes = Base64.decode(`std, p);
-         let blen = Array.length(bytes);
-         let bytes = Array.append(Array.init(8 - blen, _ => '\000'), bytes);
-         let num = Binary.float_of_bytes(`big, bytes) *. 1000.;
+  let l = Lists.of_string(data ++ "|");
+  let empty =
+    Tajm_Iana_Tz.{
+      name: "",
+      transitions: [||],
+      zone_idxs: [||],
+      zones: [||],
+      abbrev: [|""|],
+    };
 
-         neg ? -. num : num;
-       })
-    ;
-  // Js.log(" 7");
-  Tajm_Iana_Tz.{name, abbrev, zones, zone_idxs, transitions};
+  let parseTran = p => {
+    let neg = p.[0] == '-';
+    let p = neg ? String.sub(p, 1, String.length(p) - 1) : p;
+    let bytes = Base64.decode(`std, p);
+    let blen = Array.length(bytes);
+    let bytes = Array.append(Array.init(8 - blen, _ => '\000'), bytes);
+    let num = Binary.float_of_bytes(`big, bytes) *. 1000.;
+
+    neg ? -. num : num;
+  };
+  let parseZone = s => {
+    let len = String.length(s);
+    let i = String.index(s, ':');
+    let p1 = String.sub(s, 0, i);
+    let p2 = String.sub(s, i + 1, len - 1 - i);
+    Tajm_Iana_Tz.{
+      offset: p1 |> int_of_string,
+      abbrev_idx: p2 |> int_of_string,
+    };
+  };
+
+  let (_, tz, _) =
+    List.fold_left(
+      (acc: (int, Tajm_Iana_Tz.tz, string), c: char) => {
+        let (i, tz, str) = acc;
+
+        switch (i) {
+        | 0 =>
+          switch (c) {
+          | '|' => (i + 1, tz, "")
+          | _ => (i, {...tz, name: tz.name ++ Char.escaped(c)}, "")
+          }
+        | 1 =>
+          switch (c) {
+          | '|' => (i + 1, tz, "")
+          | ' ' =>
+            let abbrev = Array.append(tz.abbrev, [|""|]);
+            (i, {...tz, abbrev}, "");
+          | _ =>
+            let a = tz.abbrev;
+            let len = Array.length(a);
+            a[len - 1] = a[len - 1] ++ Char.escaped(c);
+            (i, {...tz, abbrev: a}, "");
+          }
+        | 2 =>
+          switch (c) {
+          | '|' =>
+            let z = parseZone(str);
+            (i + 1, {...tz, zones: Array.append(tz.zones, [|z|])}, "");
+          | ' ' =>
+            let z = parseZone(str);
+            (i, {...tz, zones: Array.append(tz.zones, [|z|])}, "");
+          | _ => (i, tz, str ++ Char.escaped(c))
+          }
+        | 3 =>
+          switch (c) {
+          | '|' => (i + 1, tz, "")
+          | _ =>
+            let idx = int_of_char(c) - 48;
+            let idxs = Array.append(tz.zone_idxs, [|idx|]);
+            let tz = {...tz, zone_idxs: idxs};
+            (i, tz, "");
+          }
+        | 4 =>
+          switch (c) {
+          | '|' =>
+            let z = parseTran(str);
+            let transitions = Array.append(tz.transitions, [|z|]);
+            let tz = {...tz, transitions};
+            (i + 1, tz, "");
+          | ' ' =>
+            let z = parseTran(str);
+            let transitions = Array.append(tz.transitions, [|z|]);
+            let tz = {...tz, transitions};
+            (i, tz, "");
+          | _ => (i, tz, str ++ Char.escaped(c))
+          }
+        | _ => acc
+        };
+      },
+      (0, empty, ""),
+      l,
+    );
+  tz;
 };
 
 let marshal = (tz: Tajm_Iana_Tz.tz) => {
@@ -345,9 +441,7 @@ let unmarshal_binary = (name: string, data: array(char)) => {
   // Js.log2("zone_infos", zones);
 
   let (abbrev_arr, data) = poll(head.n_char - 1, data);
-  let abbrev =
-    Arrays.to_string(abbrev_arr)
-    |> Strings.split('\000');
+  let abbrev = Arrays.to_string(abbrev_arr) |> Strings.split('\000');
   let (_, data) = poll(1, data);
   // Js.log2("abbrev", abbrev);
 

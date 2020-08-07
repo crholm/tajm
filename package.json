@@ -1,6 +1,6 @@
 {
   "name": "tajm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Rasmus Holm",
   "license": "MIT",
   "description": "A ReasonML library to handle most needs when time and dates are needed.",

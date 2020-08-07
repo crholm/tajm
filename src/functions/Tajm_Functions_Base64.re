@@ -1,6 +1,35 @@
 let encodeStd = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 let encodeURL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
+module CharMap =
+  Map.Make({
+    type t = char;
+    let compare = Char.compare;
+  });
+
+let (_, encodeStdIndex) =
+  CharMap.(
+    List.fold_left(
+      (acc, c) => {
+        let (i, m) = acc;
+        (i + 1, m |> add(c, 1));
+      },
+      (0, empty),
+      List.init(encodeStd |> String.length, i => encodeStd.[i]),
+    )
+  );
+let (_, encodeURLIndex) =
+  CharMap.(
+    List.fold_left(
+      (acc, c) => {
+        let (i, m) = acc;
+        (i + 1, m |> add(c, 1));
+      },
+      (0, empty),
+      List.init(encodeStd |> String.length, i => encodeStd.[i]),
+    )
+  );
+
 type encoding = [ | `std | `uri];
 
 let encode = (enc: encoding, bytes: array(char)): string => {
@@ -61,6 +90,11 @@ let decode = (enc: encoding, str: string): array(char) => {
     | `std => encodeStd
     | `uri => encodeURL
     };
+  //  let charsetMap =
+  //    switch (enc) {
+  //    | `std => encodeStdIndex
+  //    | `uri => encodeURLIndex
+  //    };
 
   let chars = Array.init(String.length(str), i => str.[i]);
   let len = Array.length(chars);
@@ -80,7 +114,23 @@ let decode = (enc: encoding, str: string): array(char) => {
     Array.fold_left(
       (acc, c) => {
         let (i, bytes: array(char)) = acc;
-        let v = String.index(charset, c);
+        let v = String.index(charset, c); // Seems to be faster than using a m Map
+        //        let v =
+        //          if ('A' <= c && c <= 'Z') {
+        //            int_of_char(c) - int_of_char('A');
+        //          } else if ('a' <= c && c <= 'z') {
+        //            int_of_char(c) - int_of_char('z') + 26;
+        //          } else if ('0' <= c && c <= '9') {
+        //            int_of_char(c) - int_of_char('9') + 26 * 2;
+        //          } else if (enc == `std && c == '+' || enc == `uri && c == '-') {
+        //            62;
+        //          } else if (enc == `std && c == '/' || enc == `uri && c == '_') {
+        //            63;
+        //          } else {
+        //            raise(Failure("bad input"));
+        //          };
+
+        //        let v = charsetMap |> CharMap.find(c);
         let len = Array.length(bytes);
         switch (i) {
         | 0 => (1, Array.append(bytes, [|char_of_int(v lsl 2)|]))
