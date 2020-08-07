@@ -2,6 +2,9 @@
 
 > A ReasonML library to handle most needs when time and dates are needed.
 
+## State 
+Somewhat of a beta library at the moment
+
 ## Install 
 ```bash
 npm install tajm --save
