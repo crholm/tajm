@@ -199,3 +199,104 @@ Tajm.zero
 |> Tajm.format("2006-01-02 15:04:05 Z07:00")
 |> Js.log;
 ln();
+
+Js.log("Tajm.now() |> Tajm.weekday |> Tajm.Conv.stringOfWeekday |> Js.log");
+Tajm.zero |> Tajm.weekday |> Tajm.Conv.stringOfWeekday |> Js.log;
+ln();
+
+Js.log("Tajm.zero |> Tajm.day |> Js.log");
+Tajm.zero |> Tajm.day |> Js.log;
+ln();
+
+Js.log("Tajm.zero |> Tajm.hour |> Js.log");
+Tajm.zero |> Tajm.hour |> Js.log;
+ln();
+
+Js.log("Tajm.zero |> Tajm.minute |> Js.log");
+Tajm.zero |> Tajm.minute |> Js.log;
+ln();
+
+Js.log("Tajm.zero |> Tajm.second |> Js.log");
+Tajm.zero |> Tajm.second |> Js.log;
+ln();
+
+Js.log("Tajm.zero |> Tajm.millisecond |> Js.log");
+Tajm.zero |> Tajm.millisecond |> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.yearDay |> Js.log");
+Tajm.now() |> Tajm.yearDay |> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.week |> Js.log");
+Tajm.now() |> Tajm.week |> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.clock |> Js.log");
+Tajm.now() |> Tajm.clock |> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.date |> Js.log");
+Tajm.now() |> Tajm.date |> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.set(~y=1999, ~d=1) |> Tajm.string |> Js.log");
+Tajm.now() |> Tajm.set(~y=1999, ~d=1) |> Tajm.string |> Js.log;
+ln();
+
+Js.log(
+  "Tajm.now() |> Tajm.setDate(1999, August, 1) |> Tajm.string |> Js.log",
+);
+Tajm.now() |> Tajm.setDate(1999, August, 1) |> Tajm.string |> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.setClock(10, 10, 10) |> Tajm.string |> Js.log");
+Tajm.now() |> Tajm.setClock(10, 10, 10) |> Tajm.string |> Js.log;
+ln();
+
+Js.log(
+  "Tajm.zero |> Tajm.addDate(~y=1, ~m=2, ~d=3) |> Tajm.string |> Js.log",
+);
+Tajm.zero |> Tajm.addDate(~y=1, ~m=2, ~d=3) |> Tajm.string |> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.startOf(Day) |> Tajm.string |> Js.log");
+Tajm.now() |> Tajm.startOf(Day) |> Tajm.string |> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.endOf(Day) |> Tajm.string |> Js.log");
+Tajm.now() |> Tajm.endOf(Day) |> Tajm.string |> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.format(Tajm.fmtRFC850) |> Tajm.string |> Js.log");
+Tajm.now() |> Tajm.format(Tajm.fmtRFC850) |> Js.log;
+Js.log(
+  "Tajm.now() |> Tajm.format(\"2006-01-02T15:04:05Z07:00\") |> Tajm.string |> Js.log",
+);
+Tajm.now() |> Tajm.format("2006-01-02T15:04:05Z07:00") |> Js.log;
+ln();
+
+Js.log(
+  "\"2020-08-07 09:40:55 +02:00\"
+|> Tajm.parse(\"2006-01-02 15:04:05 Z07:00\")
+|> (
+  fun
+  | Some(t) => t |> Tajm.string
+  | None => \"Failed to parse\"
+)
+|> Js.log;",
+);
+
+"2020-08-07 09:40:55 +02:00"
+|> Tajm.parse("2006-01-02 15:04:05 Z07:00")
+|> (
+  fun
+  | Some(t) => t |> Tajm.string
+  | None => "Failed to parse"
+)
+|> Js.log;
+ln();
+
+Js.log("Tajm.now() |> Tajm.string |> Js.log;");
+Tajm.now() |> Tajm.string |> Js.log;
+ln();

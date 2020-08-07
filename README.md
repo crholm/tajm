@@ -184,30 +184,127 @@ Tajm.zero
 
 
 #### `let weekday: (t: time_) => weekday_`
+```reason
+Tajm.now() |> Tajm.weekday |> Tajm.Conv.stringOfWeekday |> Js.log
+// Thursday
+```
 #### `let year: (t: time_) => int`
+```reason
+Tajm.zero |> Tajm.year |> Js.log;
+// 1970
+```
+
 #### `let month: (t: time_) => month_`
+```reason
+Tajm.zero |> Tajm.month |> Tajm.Conv.stringOfMonth |> Js.log
+// January
+```
+
 #### `let day: (t: time_) => int`
+```reason 
+Tajm.zero |> Tajm.day |> Js.log
+// 1
+```
 #### `let hour: (t: time_) => int`
+```reason
+Tajm.zero |> Tajm.hour |> Js.log
+// 0
+```
 #### `let minute: (t: time_) => int`
+```reason
+Tajm.zero |> Tajm.minute |> Js.log
+// 0
+```
 #### `let second: (t: time_) => int`
+```reason
+Tajm.zero |> Tajm.second |> Js.log
+// 0
+```
 #### `let millisecond: (t: time_) => int`
+```reason
+Tajm.zero |> Tajm.millisecond |> Js.log
+// 0
+```
 
 #### `let yearDay: (t: time_) => int`
+```reason
+Tajm.now() |> Tajm.yearDay |> Js.log
+// 220
+```
 #### `let week: (t: time_) => int`
+```Tajm.now() |> Tajm.week |> Js.log
+   32
+```
 #### `let clock: (t: time_) => (int, int, int)`
+```reason
+Tajm.now() |> Tajm.clock |> Js.log
+// [ 9, 29, 43 ]
+```
 #### `let date: (t: time_) => (int, month_, int)`
+```
+Tajm.now() |> Tajm.date |> Js.log
+// [ 2020, 7, 7 ]
+```
 
 #### `let set: (~y, ~m, ~d, ~hour, ~min, ~sec, ~ms, _time) => time_`
+```reason
+Tajm.now() |> Tajm.set(~d=1) |> Tajm.string |> Js.log
+// 1999-08-01T09:32:06.946Z
+```
 #### `let setDate: (y: int, m: month_, d: int, t: time_) => time_`
+```reason
+Tajm.now() |> Tajm.setDate(1999, August, 1) |> Tajm.string |> Js.log
+// 1999-08-01T09:33:27.010Z
+```
+
 #### `let setClock: (hour: int, min: int, sec: int, t: time_) => time_`
+```reason
+Tajm.now() |> Tajm.setClock(10, 10, 10) |> Tajm.string |> Js.log
+// 2020-08-07T10:10:10.552Z
+```
 
 #### `let addDate: (~y, ~m, ~d, t: time_) => time_`
+```reason
+Tajm.zero |> Tajm.addDate(~y=1, ~m=2, ~d=3) |> Tajm.string |> Js.log
+// 1971-03-04T00:00:00.000Z
+```
 #### `let startOf = (u: timeunit_, t: time_) => time_`
+```reason
+Tajm.now() |> Tajm.startOf(Day) |> Tajm.string |> Js.log
+// 2020-08-07T00:00:00.000Z
+```
 #### `let endOf = (u: timeunit_, t: time_) => time_`
+```reason
+Tajm.now() |> Tajm.endOf(Day) |> Tajm.string |> Js.log
+// 2020-08-07T23:59:59.999Z
+```
 
 #### `let format: (format: string, t: time_) => string`
+```reason
+Tajm.now() |> Tajm.format(Tajm.fmtRFC850) |> Tajm.string |> Js.log
+// Friday, 07-Aug-20 09:40:55 UTC
+Tajm.now() |> Tajm.format("2006-01-02T15:04:05Z07:00") |> Tajm.string |> Js.log
+// 2020-08-07T09:40:55Z
+
+```
 #### `let parse: (format: string, t: string) => time_`
+```reason
+"2020-08-07 09:40:55 +02:00"
+|> Tajm.parse("2006-01-02 15:04:05 Z07:00")
+|> (
+  fun
+  | Some(t) => t |> Tajm.string
+  | None => "Failed to parse"
+)
+|> Js.log;
+// 2020-08-07T07:40:55.000Z
+```
+
 #### `let string: (t: time_) => string`
+```reason
+Tajm.now() |> Tajm.string |> Js.log;
+// 2020-08-07T09:47:58.315Z
+```
 
 </details>
 
