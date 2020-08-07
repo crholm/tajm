@@ -10,14 +10,20 @@ let at = (loc: location_, t: time_) => {
   {...t, loc};
 };
 
+/*Sets the location to the Local time zone*/
 let atLocal = at(local);
+/*Sets the location to UTC*/
 let atUTC = at(z);
+/*Sets the location to a fixed offset*/
 let atFixed = (name: string, sec: int) => Fixed(name, sec) |> at;
 let zone = (t: time_) => {
   t.loc;
 };
 let zero = {t: 0L, loc: z};
 
+/*Tries to load retrieve the location by name, eg UTC, Local and Europe/Stockholm
+
+  For IANA locations, such as Europe/Stockholm, a time zone database must be loaded, view section on IANA*/
 let location = (name: string): option(location_) => {
   switch (name |> String.lowercase_ascii) {
   | "local" => Some(local)
@@ -68,85 +74,101 @@ let make =
   {...d, t: Int64.add(d.t, msf)};
 };
 
-/* Cast any event type to the general synthetic type. This is safe, since synthetic is more general */
+/* Creates a time of current time in UTC */
 let now = (): time_ => {
   let ms = Tajm_Kernel.now();
   {t: ms |> Int64.of_float, loc: z};
 };
 
+/* Adds a duration to a time and returns the new new time.
+   > ⚠ Do not use longer periods, days, months and so on. This since eg. hour*24*365 are does not nessasary a year,
+    due to leapyears and leap secounds. Insead use addDate
+   */
 let add = (dur: duration_, t: time_): time_ => {
   {...t, t: t.t |> Int64.add(dur |> Int64.of_float)};
 };
 
+/* Subtracts t1 from t2 and returns the difference as a duration (ms)*/
 let sub = (t1: time_, t2: time_): duration_ => {
   Int64.sub(t1.t, t2.t) |> Int64.to_float;
 };
 
+/* Returns the dutaion elapsed from t */
 let since = (t: time_): duration_ => {
   t |> sub(now());
 };
 
+/* Returns the dutaion from now until t */
 let until = (t: time_): duration_ => {
   now() |> sub(t);
 };
 
+/* Truncate the time a with the specified duration,
+   eg. if duration second, seconds and milliseconds is truncated from time  */
 let truncate = (_m: duration_, t: time_): time_ => {
   {...t, t: Int64.sub(t.t, Int64.rem(t.t, _m |> Int64.of_float))};
 };
 
-// y2000 |> before(y3000) // true
-// y3000 |> before(y2000) // flase
+/* Is time1 before time2 */
 let before = (t1: time_, t2: time_): bool => {
   t1.t < t2.t;
 };
 
-// y2000 |> after(y3000) // false
-// y3000 |> after(y2000) // true
+/* Is time1 after time2 */
 let after = (t1: time_, t2: time_): bool => {
   t1.t > t2.t;
 };
 
+/* Is time in the future */
 let future = (t: time_): bool => {
   now().t < t.t;
 };
+
+/* Is time in the past */
 let past = (t: time_): bool => {
   t.t < now().t;
 };
 
+/*Returns the weekday of the provided time*/
 let weekday = (t: time_): weekday_ => {
   let d = (t |> Tajm_Kernel.getDay |> int_of_float) - 1;
   (d == (-1) ? 6 : d) |> weekdayOfInt;
 };
 
+/*Returns the year of the provided time*/
 let year = (t: time_): int => {
   t |> Tajm_Kernel.getFullYear |> int_of_float;
 };
-
+/*Returns the month of the provided time*/
 let month = (t: time_): month_ => {
   (t |> Tajm_Kernel.getMonth |> int_of_float) + 1 |> monthOfInt;
 };
 
-// Day of month
+/* Returns the day in the month of the provided time */
 let day = (t: time_): int => {
   t |> Tajm_Kernel.getDate |> int_of_float;
 };
 
+/*Returns the hour of the provided time*/
 let hour = (t: time_): int => {
   t |> Tajm_Kernel.getHours |> int_of_float;
 };
-
+/*Returns the minute of the provided time*/
 let minute = (t: time_): int => {
   t |> Tajm_Kernel.getMinutes |> int_of_float;
 };
 
+/*Returns the second of the provided time*/
 let second = (t: time_): int => {
   t |> Tajm_Kernel.getSeconds |> int_of_float;
 };
 
+/*Returns the millisecond of the provided time*/
 let millisecond = (t: time_): int => {
   t |> Tajm_Kernel.getMilliseconds |> int_of_float;
 };
 
+/*Returns day of the year, where 01/jan is 1 and 31/dec is 365*/
 let yearDay = (t: time_): int => {
   let year = year(t);
   let rec calc = (acc, month) => {
@@ -161,6 +183,7 @@ let yearDay = (t: time_): int => {
   calc(d, month - 1);
 };
 
+/*Returns the week of the year, 1-53*/
 let week = (t: time_): int => {
   let doy = yearDay(t);
   let dow = weekday(t) |> intOfWeekday;
@@ -169,6 +192,7 @@ let week = (t: time_): int => {
   dow < firstDow ? week + 1 : week;
 };
 
+/*Returns the wall clock as three ints, (hh mm ss)*/
 let clock = (t: time_): (int, int, int) => {
   (
     //TODO, maybe adjust for location
@@ -177,10 +201,13 @@ let clock = (t: time_): (int, int, int) => {
     second(t),
   );
 };
+
+/*Returns the calender date, (year month day)*/
 let date = (t: time_): (int, month_, int) => {
   (year(t), month(t), day(t));
 };
 
+/* Sets any specific parameters to a time and defaults to current*/
 let set =
     (
       ~y: option(int)=?,
@@ -205,10 +232,14 @@ let set =
   );
 };
 
+/*Sets any specific date to a time and keep hour, min, sec, ms from original*/
 let setDate = (y: int, m: month_, d: int, t: time_) => set(~y, ~m, ~d, t);
+
+/*Sets any specific wall clock to a time and keep year, month and day from original*/
 let setClock = (hour: int, min: int, sec: int, t: time_) =>
   set(~hour, ~min, ~sec, t);
 
+/*Add lager time units, year, month and day, to a time*/
 let addDate =
     (
       ~y as years: option(int)=?,
