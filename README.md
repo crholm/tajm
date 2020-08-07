@@ -537,6 +537,4 @@ npm run test
 * More tests 
 * Finish Tajm.parse 
 * Expose IANA properly
-* Convert IANA DB to Map
-* Rewrite IANA unmarshaler to pass once
 * Finish Documentation

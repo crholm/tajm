@@ -23,36 +23,37 @@ let abbr = (i: tz, period: int): string => {
   i.abbrev[abbrev_idx];
 };
 
-// Should be replaced by a key value store... Map or such
-let db = ref([||]: array(tz));
-let dbz = ref([||]: array(Lazy.tz));
+module DbMap =
+  Map.Make({
+    type t = string;
+    let compare = compare;
+  });
 
-let loadLocations = (tzs: array(tz)) => {
-  db := Array.append(tzs, db^);
-};
+let db = ref(DbMap.empty);
+let dbz = ref(DbMap.empty);
+
 let loadLocation = (tz: tz) => {
-  loadLocations([|tz|]);
+  db := db^ |> DbMap.add(tz.name, tz);
+};
+let loadLocations = (tzs: array(tz)) => {
+  Array.iter(loadLocation, tzs);
 };
 
-let lazyLoadLocations = (tzs: array(Lazy.tz)) => {
-  dbz := Array.append(tzs, dbz^);
-};
 let lazyLoadLocation = (tz: Lazy.tz) => {
-  lazyLoadLocations([|tz|]);
+  dbz := dbz^ |> DbMap.add(tz.name, tz);
+};
+let lazyLoadLocations = (tzs: array(Lazy.tz)) => {
+  Array.iter(lazyLoadLocation, tzs);
 };
 
-let getLocation = (name: string): option(tz) => {
-  let o = db^ |> Tajm_Functions_Array.find(a => a.name == name);
-  switch (o) {
-  | Some(t) => Some(t)
-  | None =>
-    let l = dbz^ |> Tajm_Functions_Array.find((a: Lazy.tz) => a.name == name);
-    switch (l) {
-    | Some(lz) =>
-      let loc = Tajm_Iana_Encoding.unmarshal(lz.raw);
-      loadLocation(loc);
-      Some(loc);
-    | None => None
-    };
+let getLocation = (name: string): option(tz) =>
+  if (db^ |> DbMap.mem(name)) {
+    Some(db^ |> DbMap.find(name));
+  } else if (dbz^ |> DbMap.mem(name)) {
+    let l: Lazy.tz = dbz^ |> DbMap.find(name);
+    let tz = Tajm_Iana_Encoding.unmarshal(l.raw);
+    loadLocation(tz);
+    Some(tz);
+  } else {
+    None;
   };
-};
