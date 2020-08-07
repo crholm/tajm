@@ -3,7 +3,8 @@
 > A ReasonML library to handle most needs when time and dates are needed.
 
 ## State 
-Somewhat of a beta library at the moment
+>⚠ Please try but use with care, this is still a work in progress  
+>
 
 ## Install 
 ```bash
@@ -88,7 +89,7 @@ Tajm.now() |> Tajm.toJs |> Js.log
 ```
 
 #### `let add: (dur: duration_, t: time_) => time_`
-Adds a duration to a time and returns the new new time.
+Adds a duration to a time and returns the new time.
 
 > ⚠ Do not use longer periods, days, months and so on. This since eg. hour * 24 * 365 is not nessasary a year,
  due to leapyears and leap secounds. Insead use `addDate`
