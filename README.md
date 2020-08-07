@@ -7,10 +7,10 @@ The api is inspierd by Golang time lib
 
 Tajm does not differentiate between a date and a time (wall clock). Instead there is only one type, `time_`, which can be used for both dependent on your need
 
-<details>
+<details open>
 <summary><strong>Tajm</strong></summary>
 
-#### `let zero = () => time_`
+#### `let zero: () => time_`
 ```reason 
 Tajm.zero() |> Tajm.string |> Js.log
 // 1970-01-01T00:00:00.000Z
@@ -279,15 +279,85 @@ Tajm.now() |> Tajm.endOf(Day) |> Tajm.string |> Js.log
 // 2020-08-07T23:59:59.999Z
 ```
 
-#### `let format: (format: string, t: time_) => string`
+#### `let format: (layout: string, t: time_) => string`
+Formats a time to a string in accordance to the layout string. The layout is borrowed from [golang time library](https://golang.org/src/time/format.go?s=16029:16071#L92) with some addition and changes. It provides a human friendly way for developers to see what the expected output will be.
+
 ```reason
 Tajm.now() |> Tajm.format(Tajm.fmtRFC850) |> Tajm.string |> Js.log
 // Friday, 07-Aug-20 09:40:55 UTC
 Tajm.now() |> Tajm.format("2006-01-02T15:04:05Z07:00") |> Tajm.string |> Js.log
 // 2020-08-07T09:40:55Z
-
 ```
-#### `let parse: (format: string, t: string) => time_`
+
+<details open>
+<summary><strong>Pre defined Layouts</strong></summary>
+
+```reason
+Tajm.fmtANSIC           = "Mon Jan _2 15:04:05 2006";
+Tajm.fmtUnixDate        = "Mon Jan _2 15:04:05 MST 2006";
+Tajm.fmtRubyDate        = "Mon Jan 02 15:04:05 -0700 2006";
+Tajm.fmtRFC822          = "02 Jan 06 15:04 MST";
+Tajm.fmtRFC822Z         = "02 Jan 06 15:04 -0700"; // RFC822 with numeric zone
+Tajm.fmtRFC850          = "Monday, 02-Jan-06 15:04:05 MST";
+Tajm.fmtRFC1123         = "Mon, 02 Jan 2006 15:04:05 MST";
+Tajm.fmtRFC1123Z        = "Mon, 02 Jan 2006 15:04:05 -0700"; // RFC1123 with numeric zone
+Tajm.fmtRFC3339         = "2006-01-02T15:04:05Z07:00";
+Tajm.fmtRFC3339ms       = "2006-01-02T15:04:05.999Z07:00";
+Tajm.fmtISOTimestamp    = "2006-01-02T15:04:05Z07:00"; // ISO 8601
+Tajm.fmtISOTimestampMs  = "2006-01-02T15:04:05.000Z07:00"; // ISO 8601
+Tajm.fmtISOWeek         = "2006-W49"; // ISO 8601
+Tajm.fmtISOWeekDay      = "2006-W49-7"; // ISO 8601
+Tajm.fmtKitchen         = "3:04PM";
+```
+</details>
+
+<details open>
+<summary><strong>Layout Reference</strong></summary>
+
+```reason
+| LongMonth         // = "January";
+| Month             // = "Jan";
+| NumMonth          // = "1";
+| ZeroMonth         // = "01"; Padd left with 0
+| RightMonth        // = "_1";  Right aligns
+| LongWeekDay       // = "Monday";
+| WeekDay           // = "Mon";
+| NumWeekDay        // = "7";
+| Day               // = "2";
+| ZeroDay           // = "02"; Padd left with 0
+| RightDay          // = "_2"; Right aligns
+| YearDay           // = "8"
+| ZeroYearDay       // = "008";
+| RightYearDay      // = "__8"; Right aligns
+| Hour              // = "15";
+| Hour12            // = "3";
+| ZeroHour12        // = "03"; Padd left with 0
+| RightHour12       // = "_3"; Right aligns
+| Minute            // = "4";
+| ZeroMinute        // = "04"; Padd left with 0
+| RightMinute       // = "_4"; Right aligns
+| YearWeek          // = "49";
+| RightYearWeek     // = "_9" Right aligns
+| ZeroYearWeek      // = "09" Padd left with 0
+| Second            // = "5";
+| ZeroSecond        // = "05"; Padd left with 0
+| RightSecond       // = "_5"; Right aligns
+| LongYear          // = "2006";
+| Year              // = "06"; 
+| PM(bool)          // = "PM" | "pm";
+| TZ                // = "MST"; Poor interop with local timezone due to the js Date api behavior
+| ISO8601TZ         // = "Z0700";  prints Z for UTC
+| ISO8601ShortTZ    // = "Z07";
+| ISO8601ColonTZ    // = "Z07:00";  prints Z for UTC
+| NumTZ             // = "-0700";  always numeric
+| NumShortTZ        // = "-07"; always numeric
+| NumColonTZ        // = "-07:00";
+| FracSecond0(int)  // = ".0"; ".00", ".000", ... , trailing zeros included
+| FracSecond9(int)  // = ".9"; ".99", ".999" ... , trailing zeros omited
+```
+</details>
+
+#### `let parse: (layout: string, t: string) => time_`
 ```reason
 "2020-08-07 09:40:55 +02:00"
 |> Tajm.parse("2006-01-02 15:04:05 Z07:00")
@@ -309,7 +379,7 @@ Tajm.now() |> Tajm.string |> Js.log;
 </details>
 
 
-<details>
+<details open>
 <summary><strong>Tajm.Duration</strong></summary>
 
 #### `let millisecond: duration_`
@@ -323,7 +393,7 @@ Tajm.now() |> Tajm.string |> Js.log;
 
 </details>
 
-<details>
+<details open>
 <summary><strong>Tajm.Is</strong></summary>
 
 #### `let  equal: (t1: time_, t2: time_) => bool`
@@ -359,7 +429,7 @@ Tajm.now() |> Tajm.string |> Js.log;
 
 </details>
 
-<details>
+<details open>
 <summary><strong>Tajm.Conv</strong></summary>
 
 #### `let stringOfWeekday: (weekday: weekday_) => string`
@@ -378,7 +448,7 @@ Tajm.now() |> Tajm.string |> Js.log;
 
 
 
-<details>
+<details open>
 <summary><strong>Types</strong></summary>
 
 ```reason
@@ -430,3 +500,14 @@ type location_ =
 ```
 
 </details>
+
+
+
+## Contribute
+```reason
+git clone https://github.com/crholm/tajm.git
+cd tajm
+npm install
+npm run build
+npm run test
+```
