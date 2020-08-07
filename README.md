@@ -25,10 +25,11 @@ Tajm.now() |> Tajm.string |> Js.log
 #### `let ofUnix: (f: float) => time_`
 ```reason 
 Tajm.ofUnix(1585443600000.)  |> Tajm.string |> Js.log
-// 2020-03-29T01:00:00.000Z```
-
+// 2020-03-29T01:00:00.000Z
+```
 
 #### `let make: (~y, ~m, ~d, ~hour, ~min, ~sec, ~ms, loc) => time_`
+
 ```reason 
 Tajm.make(
   ~y=2020,
@@ -55,12 +56,12 @@ Tajm.zero |> Tajm.compare(Tajm.now()) |> Js.log
 #### `let unix: (t: time_) => float`
 ```reason 
 Tajm.now() |> Tajm.unix |> Js.log
-1596788909886
+// 1596788909886
 ```
 #### `let toJs: (t: time_) => Js.Date.t`
 ```reason 
 Tajm.now() |> Tajm.toJs |> Js.log
-2020-08-07T08:29:14.241Z
+// 2020-08-07T08:29:14.241Z
 ```
 
 #### `let add: (dur: duration_, t: time_) => time_`
@@ -70,8 +71,8 @@ Tajm.now()
 |> Tajm.add(Tajm.Duration.hour)
 |> Tajm.string
 |> Js.log
-//2020-08-07T08:35:18.066Z
-//2020-08-07T09:35:18.066Z
+// 2020-08-07T08:35:18.066Z
+// 2020-08-07T09:35:18.066Z
 ```
 
 #### `let sub: (t1: time_, t2: time_) => duration_`
@@ -117,7 +118,7 @@ Tajm.now()->Tajm.before(Tajm.zero) |> Js.log;
 #### `let after: (t2: time_, t1: time_) => bool`
 ```reason 
 Tajm.now()->Tajm.after(Tajm.zero) |> Js.log;
-//true
+// true
 ```
 
 #### `let future: (t: time_) => bool`
@@ -147,15 +148,16 @@ Tajm.now()
 |> Tajm.atLocal
 |> Tajm.format("2006-01-02 15:04:05 Z07:00")
 |> Js.log
-2020-08-07 11:05:38 +02:00
+// 2020-08-07 11:05:38 +02:00
 ```
+
 #### `let atFixed = (name: string, sec: int) => time_`
 ```reason
 Tajm.now()
 |> Tajm.atFixed("CEST", 2 * 60 * 60)
 |> Tajm.format("2006-01-02 15:04:05 MST")
 |> Js.log
-//2020-08-07 11:07:46 CEST
+// 2020-08-07 11:07:46 CEST
 ```
 
 #### `let at = (loc: location_, t: time_) => time_`
@@ -164,7 +166,7 @@ Tajm.now()
 |> Tajm.at(Tajm.local)
 |> Tajm.format("2006-01-02 15:04:05 MST")
 |> Js.log;
-2020-08-07 11:10:21 Central European Summer Time
+// 2020-08-07 11:10:21 Central European Summer Time
 ```
 
 
@@ -175,7 +177,7 @@ Tajm.zero
 |> Tajm.at(zone)
 |> Tajm.format("2006-01-02 15:04:05 Z07:00")
 |> Js.log;
-1970-01-01 01:00:00 +01:00
+// 1970-01-01 01:00:00 +01:00
 ```
 
 #### `let location: (name: string) => option(location_)`
