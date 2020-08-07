@@ -1,6 +1,9 @@
 # Tajm [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/crholm/tajm/blob/master/LICENSE) [![npm](https://img.shields.io/npm/v/tajm.svg?style=flat-square&logo=npm)](https://www.npmjs.com/package/tajm) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)  
 
 > Tajm, pronounced time, is ReasonML library to handle most needs when time and dates are needed.
+>
+The purpose of the library is to have a tool for handling times and date that is as 
+uncoupled from `Js.Date` and provide the most common functionalities generally needed. Tajm supports time zone locations, such as `Europe/London`, when parsing and formatting dates. The IANA data needed for this and is compiled into the library (unused timezone data can be tree shooken out for production).   
 
 ## State 
 >⚠ Please try it, but use with care. tajm is still a work in progress  
