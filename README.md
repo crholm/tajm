@@ -1,4 +1,4 @@
-# Tajm [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/crholm/tajm/blob/master/LICENSE)
+# Tajm [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/crholm/tajm/blob/master/LICENSE) [![npm](https://img.shields.io/npm/v/tajm.svg?style=flat-square&logo=npm)](https://www.npmjs.com/package/tajm) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)  
 
 > A ReasonML library to handle most needs when time and dates are needed.
 
