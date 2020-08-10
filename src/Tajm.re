@@ -26,3 +26,4 @@ let string = (t: time_): string => {
 };
 
 let toJs = Tajm_Kernel.toJs;
+let ofJs = Tajm_Kernel.ofJs;

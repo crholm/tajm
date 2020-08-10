@@ -4,6 +4,10 @@ let fromFloat = Js.Date.fromFloat;
 let toJs = (t: time_) => {
   t.t |> Int64.to_float |> fromFloat;
 };
+let ofJs = (date: Js.Date.t) => {
+  let f = date |> Js.Date.getTime;
+  {t: Int64.of_float(f), loc: Fixed("UTC", 0)};
+};
 
 let getTZName = (t: time_) => {
   switch (t.loc) {
